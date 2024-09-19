@@ -1,7 +1,10 @@
-#include <cstdio>
+#define SDL_MAIN_HANDLED 
 
-int main()
+#include "Game.hpp"
+
+int main(int argc, char* argv[]) 
 {
-    printf("Hello From Project Init\n");
+    Game* game = new Game();
+    game->RunGame();
     return 0;
 }

@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include/**",
+                "${workspaceFolder}/src/**",
                 "${workspaceFolder}/external/**",
                 "${vcpkgRoot}/x64-windows/include",
                 "C:/msys64/ucrt64/include/**"

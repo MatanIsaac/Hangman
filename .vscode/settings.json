@@ -1,3 +1,9 @@
 {
-    "C_Cpp.default.compilerPath": "C:/msys64/ucrt64/bin/g++."
+    "C_Cpp.default.compilerPath": "C:/msys64/ucrt64/bin/g++.",
+    "cmake.ignoreCMakeListsMissing": true,
+    "files.associations": {
+        "iostream": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp"
+    }
 }
