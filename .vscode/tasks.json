@@ -9,6 +9,7 @@
                 "-g",
                 "${file}",
                 "-o",
+                "-I${workspaceFolder}\\include",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {

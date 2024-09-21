@@ -12,16 +12,17 @@
 Game::Game()
     : m_IsRunning(false), m_Window(nullptr), m_Renderer(nullptr), m_CurrentState(nullptr)
 {
-    std::cout << "Menu CTOR\n";
+    std::cout << "Game CTOR\n";
 }
 
 Game::~Game()
 {
-    std::cout << "Menu DTOR\n";
+    std::cout << "Game DTOR\n";
 }
 
 bool Game::Init(std::string title, int width, int height)
 {
+    std::cout << "Menu Init\n";
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << '\n';
