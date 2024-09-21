@@ -5,7 +5,7 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include "GameStates/IGameState.hpp"
-
+#include "Graphics/Texture.hpp"
 
 struct SDLWindowDeleter
 {
@@ -49,6 +49,8 @@ private:
 
     std::unique_ptr<SDL_Window, SDLWindowDeleter> m_Window;
     std::unique_ptr<SDL_Renderer, SDLRendererDeleter> m_Renderer;
+
+    std::unique_ptr<Texture> m_Background;
 
     IGameState* m_CurrentState;
 };

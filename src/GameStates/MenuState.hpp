@@ -4,6 +4,8 @@
 #include <SDL.h>
 
 #include "IGameState.hpp"
+#include <Graphics/TextRenderer.hpp>
+#include <Graphics/Button.hpp>
 
 class Game;
 
@@ -20,5 +22,7 @@ public:
 
 private:
 	Game* m_Game;
-
+	std::unique_ptr<Button, ButtonDeleter> m_PlayButton;	
+	std::unique_ptr<Button, ButtonDeleter> m_QuitButton;	
+	std::unique_ptr<TextRenderer, TextRendererDeleter> m_TextRenderer;
 };

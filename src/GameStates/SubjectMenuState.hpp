@@ -4,6 +4,9 @@
 #include <SDL.h>
 
 #include "IGameState.hpp"
+#include "Graphics/Button.hpp"
+#include "Graphics/TextRenderer.hpp"
+#include "../Subjects.hpp"
 
 class Game;
 
@@ -21,4 +24,7 @@ public:
 private:
 	Game* m_Game;
 
+	std::unique_ptr<Button,ButtonDeleter> m_SubjectFood;
+	std::unique_ptr<TextRenderer,TextRendererDeleter> m_TextRenderer;
+	Subject::Subjects m_CurrentSubject;
 };

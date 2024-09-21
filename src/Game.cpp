@@ -1,7 +1,8 @@
 #include "Game.hpp"
 #include <iostream>
 #include <memory>
-#include <exception>
+#include <exception>  
+#include <direct.h>      
 
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp"
@@ -13,6 +14,7 @@ Game::Game()
     : m_IsRunning(false), m_Window(nullptr), m_Renderer(nullptr), m_CurrentState(nullptr)
 {
     std::cout << "Game CTOR\n";
+    m_Background = nullptr;
 }
 
 Game::~Game()
@@ -22,7 +24,7 @@ Game::~Game()
 
 bool Game::Init(std::string title, int width, int height)
 {
-    std::cout << "Menu Init\n";
+    std::cout << "Game Init\n";
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << '\n';
@@ -60,7 +62,12 @@ bool Game::Init(std::string title, int width, int height)
         SDL_Quit();
         return false;
     }
-   
+
+    m_Background = std::make_unique<Texture>();
+    if (!m_Background->CreateTexture(m_Renderer.get(), "src\\Assets\\bg.jpg"))
+    {
+        std::cerr << "Failed to load background texture!\n";
+    }
 
     ChangeState(GameStateType::MENU);
 
@@ -118,7 +125,11 @@ void Game::Render()
     SDL_SetRenderDrawColor(m_Renderer.get(), 255, 255, 255, 255);
     SDL_RenderClear(m_Renderer.get());
 
+    if(m_Background)
+        m_Background->Render(m_Renderer.get(),0,0);
+    
     m_CurrentState->Render(m_Renderer.get());
+    
     SDL_RenderPresent(m_Renderer.get());
 }
 

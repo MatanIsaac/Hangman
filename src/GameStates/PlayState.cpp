@@ -10,7 +10,7 @@
 PlayState::PlayState(Game* game, const std::string& randomWord)
     : m_Game(game)
 {
-    std::cout << "Menu CTOR\n";
+    std::cout << "Play CTOR\n";
 
     FillLetterBank(); 
 
@@ -79,7 +79,7 @@ PlayState::PlayState(Game* game, const std::string& randomWord)
     
 PlayState::~PlayState() 
 {
-    std::cout << "Menu DTOR\n";
+    std::cout << "Play DTOR\n";
     Clean();
 }
 
@@ -95,7 +95,7 @@ void PlayState::Update( float deltaTime )
 
 void PlayState::Render( SDL_Renderer* renderer )
 {
-
+    
 }
 
 void PlayState::Clean()
