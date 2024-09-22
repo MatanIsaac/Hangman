@@ -4,8 +4,7 @@
 
 int main(int argc, char* argv[]) 
 {
-    Game* game = new Game();
-    game->RunGame();
-    delete game;
+    Game game;
+    game.RunGame();
     return 0;
 }
