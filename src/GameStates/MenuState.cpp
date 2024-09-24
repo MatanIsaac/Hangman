@@ -14,17 +14,17 @@ MenuState::MenuState(Game* game)
 
 	float xAxisCenter = SCREEN_WIDTH / 2.f;
 
-	glm::vec2 playButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) + 100.f ) );
+	glm::vec2 playButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) ) );
 	m_PlayButton.reset(new Button(m_Game->GetRenderer(), "Play", 36, playButtonPosition));
 	
-	glm::vec2 quitButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) + 150.f ) );
+	glm::vec2 quitButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) + 50.f ) );
 	m_QuitButton.reset(new Button(m_Game->GetRenderer(), "Quit", 36, quitButtonPosition)); 
 
 	m_TextRenderer.reset(new TextRenderer 
 	(
 		game->GetRenderer(),
 		"src\\Assets\\fonts\\Filmcryptic.ttf",
-		28,
+		40,
 		SDL_Color{255,255,255,255}
 	));
 }
@@ -76,7 +76,7 @@ void MenuState::Render( SDL_Renderer* renderer )
 {
 	m_PlayButton->Render();
 	m_QuitButton->Render();
-	m_TextRenderer->RenderText(300, 100,SDL_Color{255,255,255,255},"Welcome To Hangman");
+	m_TextRenderer->RenderText(250, 100,SDL_Color{255,255,255,255},"Welcome To Hangman");
 
 }
 

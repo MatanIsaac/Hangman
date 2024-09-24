@@ -43,16 +43,13 @@ public:
         }
         else
         {
-            SDL_Log("Failed to render text: Font not loaded.");
+            SDL_Log("Failed to render text: %s", SDL_GetError());
         }
     }
 
     const FC_Font& GetFont() const { return *m_Font; }
     const glm::vec2& GetPosition() const { return m_Position; }
     const glm::vec2& GetScale() const { return m_Scale; }
-
-    void SetPosition(const glm::vec2& position) { m_Position = position; }
-    void SetScale(const glm::vec2& scale) { m_Scale = scale; }
 
 private:
     FC_Font* m_Font;

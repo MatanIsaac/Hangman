@@ -60,8 +60,8 @@ void SubjectMenuState::Render( SDL_Renderer* renderer )
     m_SubjectFood->Render();
     m_TextRenderer->RenderText
     (
-        SCREEN_WIDTH / 3.f, 
-        ( SCREEN_HEIGHT / 3.f ),
+        250, 
+        100,
         SDL_Color{255, 183, 77, 255},
         "Pick a Subject:"
     );
