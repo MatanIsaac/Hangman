@@ -23,9 +23,8 @@ MenuState::MenuState(Game* game)
 	m_TextRenderer.reset(new TextRenderer 
 	(
 		game->GetRenderer(),
-		"src\\Assets\\fonts\\Filmcryptic.ttf",
-		40,
-		SDL_Color{255,255,255,255}
+		"Assets\\fonts\\Filmcryptic.ttf",
+		40
 	));
 }
 
@@ -76,7 +75,7 @@ void MenuState::Render( SDL_Renderer* renderer )
 {
 	m_PlayButton->Render();
 	m_QuitButton->Render();
-	m_TextRenderer->RenderText(250, 100,SDL_Color{255,255,255,255},"Welcome To Hangman");
+	m_TextRenderer->RenderText(250, 100,COLOR_LIGHTORANGE,"Welcome To Hangman");
 
 }
 

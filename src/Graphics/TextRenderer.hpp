@@ -9,12 +9,12 @@
 class TextRenderer
 {
 public:
-    TextRenderer(SDL_Renderer* renderer, std::string fontPath, int fontSize, SDL_Color fontColor)
+    TextRenderer(SDL_Renderer* renderer, std::string fontPath, int fontSize)
         : m_Renderer(renderer)
     {
         m_Font = FC_CreateFont();
         if (FC_LoadFont(m_Font, renderer, fontPath.c_str(), 
-            fontSize, FC_MakeColor(fontColor.r, fontColor.g, fontColor.b, fontColor.a), TTF_STYLE_NORMAL) == 0)
+            fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL) == 0)
         {
             SDL_Log("Failed to load font: %s", SDL_GetError());
         }
@@ -51,6 +51,7 @@ public:
     const glm::vec2& GetPosition() const { return m_Position; }
     const glm::vec2& GetScale() const { return m_Scale; }
 
+    void SetPosition(const glm::vec2 newPosition) { m_Position = newPosition; }
 private:
     FC_Font* m_Font;
     SDL_Rect m_Rect;

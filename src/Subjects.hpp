@@ -15,14 +15,22 @@ struct Subject
 
     /// @brief  // This function will convert the Subjects enum to a string
     /// @param s the Subjects enum to convert
-    static constexpr const char* SubjectToString(Subjects s)
+    static std::string* SubjectToString(Subjects s)
     {
+        std::string* ret = new std::string();
         switch (s)
         {
-            case Subjects::NONE: return "NONE";
-            case Subjects::FOOD: return "FOOD";
-            default: return "Out of range";
+            case Subjects::NONE: 
+                *ret = "NONE"; 
+                break;
+            case Subjects::FOOD: 
+                *ret = "FOOD"; 
+                break;
+            default: 
+                *ret = "Out of range";
+                break;
         }
+        return ret;
     }
    
     /// @brief  // This function will read the word bank from a file and 
@@ -32,12 +40,13 @@ struct Subject
     static void GetWordBank(std::vector<std::string>& subjectVec, Subjects subject)
     {
         if( subject == Subjects::NONE ) return;
-        std::string subjectName = SubjectToString(subject);
+        std::string* subjectName = SubjectToString(subject);
         std::ifstream newFile;
-        newFile.open("src\\Assets\\WordBanks\\" + subjectName + ".txt");
+        auto path = "Assets\\WordBanks\\" + *subjectName + ".txt";
+        newFile.open(path);
         if (!newFile.is_open()) 
         {
-            printf("Error: Could not open file\n");
+            printf("Error: Could not open file: %s\n", path.c_str());
             return;
         }
         std::string word;

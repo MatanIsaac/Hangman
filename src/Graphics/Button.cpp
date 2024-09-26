@@ -16,9 +16,8 @@ Button::Button(SDL_Renderer* renderer,const char *buttonText, uint8_t textSize, 
 	m_TextRenderer = new TextRenderer
 	(
 		renderer, 
-		"src\\Assets\\fonts\\Filmcryptic.ttf", 
-		textSize, 
-		SDL_Color{255,255,255,255}
+		"Assets\\fonts\\Filmcryptic.ttf", 
+		textSize
 	);
 
 	m_ButtonAction = ButtonAction::BUTTON_OUT;
@@ -76,11 +75,11 @@ void Button::Render()
 	{
 		if (m_ButtonAction == ButtonAction::BUTTON_OUT )
 		{
-			m_TextRenderer->RenderText(m_Position.x, m_Position.y, SDL_Color {255,0,0,255} ,m_ButtonText);
+			m_TextRenderer->RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255} ,m_ButtonText);
 		}
 		else if (m_ButtonAction == ButtonAction::BUTTON_HOVERED )
 		{
-			m_TextRenderer->RenderText(m_Position.x, m_Position.y, SDL_Color {0,255,0,255} ,m_ButtonText);
+			m_TextRenderer->RenderText(m_Position.x, m_Position.y, SDL_Color {255,255,255,255} ,m_ButtonText);
 			
 		}
 		else if (m_ButtonAction == ButtonAction::BUTTON_PRESSED)
@@ -90,7 +89,7 @@ void Button::Render()
 		else
 		{
 			// Default rendering if other states aren't met
-			m_TextRenderer->RenderText(m_Position.x, m_Position.y, SDL_Color {255,0,0,255} ,m_ButtonText);
+			m_TextRenderer->RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255} ,m_ButtonText);
 		}
 	}
 }

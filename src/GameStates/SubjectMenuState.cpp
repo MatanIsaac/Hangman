@@ -18,9 +18,8 @@ SubjectMenuState::SubjectMenuState(Game* game)
     m_TextRenderer.reset(new TextRenderer
 	(
 		game->GetRenderer(),
-		"src\\Assets\\fonts\\Filmcryptic.ttf",
-		40,
-		SDL_Color{255, 183, 77, 255}
+		"Assets\\fonts\\Filmcryptic.ttf",
+		40
 	));
 }
 
@@ -44,7 +43,7 @@ void SubjectMenuState::ProcessInput()
 			m_SubjectFood->SetButtonLock(false);
             m_CurrentSubject = Subject::Subjects::FOOD;
 			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-            PlayState* playState = new PlayState(m_Game, randomWord);
+            PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
 			m_Game->ChangeState(GameStateType::PLAY,playState);
 		}
 	}
@@ -62,7 +61,7 @@ void SubjectMenuState::Render( SDL_Renderer* renderer )
     (
         250, 
         100,
-        SDL_Color{255, 183, 77, 255},
+        COLOR_LIGHTORANGE,
         "Pick a Subject:"
     );
 }

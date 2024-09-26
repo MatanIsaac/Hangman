@@ -64,7 +64,7 @@ bool Game::Init(std::string title, int width, int height)
     }
 
     m_Background = std::make_unique<Texture>();
-    if (!m_Background->CreateTexture(m_Renderer.get(), "src\\Assets\\bg.jpg"))
+    if (!m_Background->CreateTexture(m_Renderer.get(), "Assets\\bg.jpg"))
     {
         std::cerr << "Failed to load background texture!\n";
     }
@@ -157,7 +157,7 @@ void Game::ChangeState(GameStateType state, IGameState* statePtr)
                 m_CurrentState = new MenuState(this);
                 break;
             case GameStateType::PLAY:
-                m_CurrentState = new PlayState(this,"");
+                m_CurrentState = new PlayState(this,"",Subject::Subjects::NONE);
                 break;
             case GameStateType::SUBJECT:
                 m_CurrentState = new SubjectMenuState(this);
