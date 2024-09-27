@@ -50,9 +50,10 @@ This involves configuring the environment to match the dependencies and settings
 ### <div align="center">Build Instructions</div>
 
     Clone the Repository: git clone [[repo-link]](https://github.com/MTN95/AsteroidsRemake)
+    Open The Command Prompt
     Navigate to Project Directory
-    Build the Project
-    Play the Game: The executable is located at repoLocation\bin\x64\Release\SDL2_Asteroids.exe
+    Run make
+    Play the Game: The executable is located at repoLocation\build\hangman.exe
 
         
 You are encouraged to use, modify, and enhance the code as you see fit. 
