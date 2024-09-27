@@ -14,7 +14,7 @@ INCLUDE_DIRS = -Iinclude -Iinclude/SDL2 -Isrc
 LIB_DIRS = -Llib/SDL2
 
 # Libraries to link (add the actual libraries, without 'lib' prefix)
-LIBS =  -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+LIBS =  -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image #-mwindows
 
 # Build directory
 BUILD_DIR = build
