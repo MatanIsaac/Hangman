@@ -2,7 +2,7 @@
 CC = g++
 
 # Compiler Flags
-CFLAGS = -ggdb -O0 -Wall -std=c++17 $(SDL_CFLAGS) $(INCLUDE_DIRS)
+CFLAGS = -Wall -std=c++17 $(SDL_CFLAGS) $(INCLUDE_DIRS) -MMD -MP
 
 # SDL2 Flags
 SDL_CFLAGS := $(shell sdl2-config --cflags)
@@ -45,6 +45,9 @@ $(BUILD_DIR)/$(TARGET): $(OBJS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# Include the generated .d files
+-include $(OBJS:.o=.d)
 
 # Clean the build directory and remove the directory
 .PHONY: clean

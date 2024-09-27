@@ -25,6 +25,7 @@ private:
 	Game* m_Game;
 
 	std::unique_ptr<Button,ButtonDeleter> m_SubjectFood;
+	std::unique_ptr<Button,ButtonDeleter> m_SubjectCountries;
 	std::unique_ptr<TextRenderer,TextRendererDeleter> m_TextRenderer;
 	Subject::Subjects m_CurrentSubject;
 };

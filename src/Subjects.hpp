@@ -5,12 +5,13 @@
 #include <cstdlib>
 #include <random>
 
-struct Subject
+typedef struct Subject
 {
     enum struct Subjects
     {
         NONE = 0,
-        FOOD
+        FOOD,
+        COUNTRIES
     };
 
     /// @brief  // This function will convert the Subjects enum to a string
@@ -25,6 +26,9 @@ struct Subject
                 break;
             case Subjects::FOOD: 
                 *ret = "FOOD"; 
+                break;
+            case Subjects::COUNTRIES: 
+                *ret = "COUNTRIES"; 
                 break;
             default: 
                 *ret = "Out of range";
@@ -49,10 +53,21 @@ struct Subject
             printf("Error: Could not open file: %s\n", path.c_str());
             return;
         }
+        std::string tmp;
         std::string word;
         
-        while (newFile >> word)
+        while (std::getline(newFile, tmp))
         {
+            for(auto& c : tmp)
+            {
+                if(c == ',')
+                {
+                    subjectVec.push_back(word);
+                    word.clear();
+                    continue;
+                }
+                word += c;
+            }
             subjectVec.push_back(word);
         }
     }
@@ -71,14 +86,14 @@ struct Subject
 
         std::random_device rd; // obtain a random number from hardware
         std::mt19937 gen(rd()); // seed the generator
-        std::uniform_int_distribution<> distr(0, (int)wordBank.size()); // range is from 0 to wordBank.size() - 1
+        std::uniform_int_distribution<> distr(0, wordBank.size() - 1); // range is from 0 to wordBank.size() - 1
 
         int randomIndex = distr(gen);
         printf("Random Index: %d - ", randomIndex);
         printf("Random Word: %s\n", wordBank[randomIndex].c_str());
         return wordBank[randomIndex];
     }
-};
+} Subject;
 
 
 

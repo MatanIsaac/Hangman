@@ -14,14 +14,14 @@ PlayState::PlayState(Game* game, const std::string& randomWord, Subject::Subject
     std::cout << "Play CTOR\n";
     m_WrongGuesses = 0;
     m_Lose = false;
-
+    spaceRemoved = false;
     FillLetterBank(); 
 
     m_WordRenderer.reset(new TextRenderer
 	(
 		game->GetRenderer(),
 		"Assets\\fonts\\Filmcryptic.ttf",
-		40
+		35
 	));
 
     m_PartsRenderer.reset(new TextRenderer
@@ -90,6 +90,14 @@ void PlayState::ProcessInput()
 {
     if(m_Lose == false)
     {
+        
+        if(!spaceRemoved && doesLetterExist(' ') == 1)
+        { 
+            std::cout << "Letter " << ' ' << " found in the map\n";
+            m_WordChars.push_back(' ');
+            m_LetterToLineMap.erase(' ');
+            spaceRemoved = true;
+        }
         for (Button* button : m_LettersButtons)
         {
             button->ProcessInput();
@@ -156,10 +164,8 @@ void PlayState::ProcessInput()
                 if(letterExists == 0)
                 {
                     std::cout << "Letter " << letter[0] << " does not exists in the map\n";
-                    
-                    m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
-
-                    // Draw stickman
+                    m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
+                        [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
                     m_WrongGuesses++;
                 }
                 
@@ -202,6 +208,7 @@ void PlayState::Update( float deltaTime )
         if(m_WordChars.size() == m_Word.length())
         {
             m_Lose = false;
+            spaceRemoved = false;
             m_Word = Subject::GetRandomWord(m_CurrentSubject);
             m_WordChars.clear();
             m_LettersButtons.clear();
@@ -233,7 +240,10 @@ void PlayState::Render( SDL_Renderer* renderer )
             {
                 for(auto& line : it->second)
                 {
-                    m_WordRenderer->RenderText(line.x, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
+                    if(letter == 'I')
+                        m_WordRenderer->RenderText(line.x+5, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
+                    else
+                        m_WordRenderer->RenderText(line.x, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
                 }
             }
         }
@@ -301,8 +311,8 @@ void PlayState::Clean()
 void PlayState::FillLetterBank()
 {
     int buttonWidth = 30;
-    float x = 20.f;
-    float y = SCREEN_HEIGHT - 100.f;
+    float x = 200.f;
+    float y = SCREEN_HEIGHT - 200.f;
     float margin = 0.f;
     int cnt = 0;
     
@@ -310,12 +320,12 @@ void PlayState::FillLetterBank()
     {
         std::string s(1, l);
         const char* c = s.c_str();
-        Button* button = new Button(m_Game->GetRenderer(), c, 25, glm::vec2(0, 0));
+        Button* button = new Button(m_Game->GetRenderer(), c, 40, glm::vec2(0, 0));
         m_LettersButtons.push_back(button);
-        if(x + buttonWidth > SCREEN_WIDTH)
+        if(cnt == 13)/*x + buttonWidth > SCREEN_WIDTH)*/
         {
             x = 200.f;
-            y += buttonWidth + margin;
+            y += buttonWidth + 20.f;
         }
         m_LettersButtons.at(cnt)->SetPosition(glm::vec2(x, y));
         x += margin + buttonWidth;
@@ -333,7 +343,7 @@ int PlayState::doesLetterExist(char letter) const
             cnt++;
         }
     }
-    std::cout << "Letter " << letter << " exists " << cnt << " times in the word\n";
+    //std::cout << "Letter " << letter << " exists " << cnt << " times in the word\n";
     return cnt;
 }
 
@@ -341,12 +351,25 @@ void PlayState::RenderLinePerLetter(SDL_Renderer* renderer)
 {
     // Render lines for each letter in m_Word
     int wordLength = m_Word.length();             
-    int startX = SCREEN_WIDTH / 2;
-    int startY = SCREEN_HEIGHT / 2;
+    int startX = SCREEN_WIDTH / 3 + 50;
+    int startY = SCREEN_HEIGHT / 2 - 100;
     int margin = 30;
+    int spaceCnt = 0;
     for (int i = 0; i < wordLength; i++)
     {
         auto it = m_LetterToLineMap.find(m_Word[i]);
+        if (m_Word[i] == ' ')   // If the letter is a space, render a space
+        {
+            m_WordRenderer->RenderText(startX + 5, startY - 60, COLOR_LIGHTORANGE, " ");
+            startX += margin;
+            spaceCnt++;
+            if(spaceCnt == 2)
+            {
+                startX = SCREEN_WIDTH / 3 + 150;
+                startY = SCREEN_HEIGHT / 2;
+            }
+            continue;
+        }
         if (it == m_LetterToLineMap.end())
             m_LetterToLineMap[m_Word[i]] = std::vector<glm::ivec2>{glm::ivec2(startX + 5, startY)};
         else

@@ -34,6 +34,7 @@ private:
 	Game* m_Game;
 	std::string m_Word;
 	bool m_Lose;
+	bool spaceRemoved;
 	int m_WrongGuesses;
 	const int MAX_WRONG_GUESSES = 6;
 	std::vector<Button*> m_LettersButtons;
