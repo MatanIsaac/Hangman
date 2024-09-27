@@ -2,9 +2,8 @@
 
 
 <div align="center">
-    <img src="[https://github.com/MTN95/AsteroidsRemake/assets/113786893/d91239fc-5195-4fa8-af3c-f710fb0b316](https://github.com/user-attachments/assets/580ed1a8-9a63-4e28-8f1d-715f56a5ae84)" alt="GamePic">
+    <img src="https://github.com/user-attachments/assets/580ed1a8-9a63-4e28-8f1d-715f56a5ae84" alt="GamePic">
 </div>
-
 
 ### <div align="center">Brief Description of the Project </div>
    
