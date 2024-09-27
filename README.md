@@ -32,11 +32,11 @@ If you're working with a different IDE, you might need to adjust the setup to co
 
 ### <div align="center">Build Instructions</div>
 
-    Clone the Repository: git clone [[repo-link]](https://github.com/MTN95/AsteroidsRemake)
+    Clone the Repository: git clone https://github.com/MatanIsaac/Hangman
     Open The Command Prompt
     Navigate to Project Directory
     Run make
-    Play the Game: The executable is located at repoLocation\build\hangman.exe
+    Play the Game: The executable is located at build\hangman.exe
 
         
 You are encouraged to use, modify, and enhance the code as you see fit, only give a credit - Copyright (c) 2024 MatanIsaac.
