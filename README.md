@@ -8,9 +8,7 @@
    
 Developed over a couple of days as a side project while pursuing my Computer Science studies.
 
-<div align="center">    
-The Game Objective
-</div>
+### <div align="center">The Game Objective</div>
 
     A simple remake of the hangman game, pick a subject, guess correctly and continue to the next word
     guess wrong 6 times and you lose and have to restart the game.
