@@ -6,7 +6,7 @@
 
 ### <div align="center">Brief Description of the Project </div>
    
-Developed over a couple of days as a side project while pursuing my Computer Science studies.
+Developed over a few weeks as a side project while pursuing my Computer Science studies.
 
 ### <div align="center">The Game Objective</div>
 
