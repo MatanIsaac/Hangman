@@ -11,7 +11,6 @@
 PlayState::PlayState(Game* game, const std::string& randomWord, Subject::Subjects subject)
     : m_Game(game), m_Word(randomWord), m_CurrentSubject(subject)
 {
-    std::cout << "Play CTOR\n";
     m_WrongGuesses = 0;
     m_Lose = false;
     spaceRemoved = false;
@@ -20,23 +19,23 @@ PlayState::PlayState(Game* game, const std::string& randomWord, Subject::Subject
     m_WordRenderer.reset(new TextRenderer
 	(
 		game->GetRenderer(),
-		"Assets\\fonts\\Filmcryptic.ttf",
+		"Assets/fonts/Filmcryptic.ttf",
 		35
 	));
 
     m_PartsRenderer.reset(new TextRenderer
 	(
 		game->GetRenderer(),
-		"Assets\\fonts\\Filmcryptic.ttf",
+		"Assets/fonts/Filmcryptic.ttf", 
 		90
 	));
     
 	float xAxisCenter = SCREEN_WIDTH / 2.f;
 
-	glm::vec2 playButtonPosition( glm::vec2( xAxisCenter - 30, ( SCREEN_HEIGHT / 2.f ) ) );
+	glm::vec2 playButtonPosition( glm::vec2( xAxisCenter, ( SCREEN_HEIGHT - 300.f ) ) );
 	m_PlayAgainButton.reset(new Button(m_Game->GetRenderer(), "Play", 36, playButtonPosition));
 
-    glm::vec2 quitButtonPosition( glm::vec2( xAxisCenter - 30, ( SCREEN_HEIGHT / 2.f ) + 50.f ) );
+    glm::vec2 quitButtonPosition( glm::vec2( xAxisCenter + 200, ( SCREEN_HEIGHT - 300.f ) ) );
 	m_QuitButton.reset(new Button(m_Game->GetRenderer(), "Quit", 36, quitButtonPosition)); 
 
     int startX = 10;
@@ -82,7 +81,6 @@ PlayState::PlayState(Game* game, const std::string& randomWord, Subject::Subject
     
 PlayState::~PlayState() 
 {
-    std::cout << "Play DTOR\n";
     Clean();
 }
 
@@ -93,7 +91,6 @@ void PlayState::ProcessInput()
         
         if(!spaceRemoved && doesLetterExist(' ') == 1)
         { 
-            std::cout << "Letter " << ' ' << " found in the map\n";
             m_WordChars.push_back(' ');
             m_LetterToLineMap.erase(' ');
             spaceRemoved = true;
@@ -121,7 +118,6 @@ void PlayState::ProcessInput()
                     auto it = m_LetterToLineMap.find(letter[0]);
                     if (it != m_LetterToLineMap.end())
                     {
-                        std::cout << "Letter " << letter[0] << " found in the map\n";
                         m_WordChars.push_back(letter[0]);
                         m_LetterToLineMap.erase(it);
                     }
@@ -133,7 +129,6 @@ void PlayState::ProcessInput()
                     auto it = m_LetterToLineMap.find(letter[0]);
                     if (it != m_LetterToLineMap.end())
                     {
-                        std::cout << "Letter " << letter[0] << " found twice in the map\n";
                         m_WordChars.push_back(letter[0]);
                         m_WordChars.push_back(letter[0]);
                         m_LetterToLineMap.erase(it);
@@ -148,7 +143,6 @@ void PlayState::ProcessInput()
                     auto it = m_LetterToLineMap.find(letter[0]);
                     if (it != m_LetterToLineMap.end())
                     {
-                        std::cout << "Letter " << letter[0] << " found twice in the map\n";
                         m_WordChars.push_back(letter[0]);
                         m_WordChars.push_back(letter[0]); 
                         m_WordChars.push_back(letter[0]); 
@@ -163,7 +157,6 @@ void PlayState::ProcessInput()
                 }
                 if(letterExists == 0)
                 {
-                    std::cout << "Letter " << letter[0] << " does not exists in the map\n";
                     m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
                         [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
                     m_WrongGuesses++;
@@ -220,12 +213,12 @@ void PlayState::Update( float deltaTime )
 
 void PlayState::Render( SDL_Renderer* renderer )
 {
+    auto subject = Subject::SubjectToString(m_CurrentSubject);
+    auto str = "Subject: " + *subject;
+    m_WordRenderer->RenderText(25, 25, COLOR_LIGHTORANGE, str);
+
     if(m_Lose == false)
     {
-        auto subject = Subject::SubjectToString(m_CurrentSubject);
-        auto str = "Subject: " + *subject;
-        m_WordRenderer->RenderText(25, 25, COLOR_LIGHTORANGE, str);
-
         for (Button* button : m_LettersButtons)
         {
             button->Render();
@@ -247,56 +240,57 @@ void PlayState::Render( SDL_Renderer* renderer )
                 }
             }
         }
-
-        for(auto& part : m_PoleParts)
-        {
-            m_PartsRenderer->RenderText(part.second.x, part.second.y, COLOR_LIGHTORANGE, std::string(1, part.first));
-        }
-
-        switch (m_WrongGuesses)
-        {
-        case 1:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            break;
-        case 2:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            break;
-        case 3:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            break;
-        case 4:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            break;
-        case 5:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
-            break;
-        case 6:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[5].second.x, m_StickmanParts[5].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[5].first));
-            m_Lose = true;
-            break;
-        default:
-            break;
-        }
     }
+
+    for(auto& part : m_PoleParts)
+    {
+        m_PartsRenderer->RenderText(part.second.x, part.second.y, COLOR_LIGHTORANGE, std::string(1, part.first));
+    }
+
+    switch (m_WrongGuesses)
+    {
+    case 1:
+        m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+        break;
+    case 2:
+        m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+        break;
+    case 3:
+        m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+        break;
+    case 4:
+        m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
+        break;
+    case 5:
+        m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
+        break;
+    case 6:
+        m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
+        m_PartsRenderer->RenderText(m_StickmanParts[5].second.x, m_StickmanParts[5].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[5].first));
+        m_Lose = true;
+        break;
+    default:
+        break;
+    }
+    
     if(m_Lose == true)
     {
-        m_WordRenderer->RenderText(SCREEN_WIDTH / 2 - 65, SCREEN_HEIGHT / 5, COLOR_LIGHTORANGE, "You Lose!");
-        m_WordRenderer->RenderText(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5 + 100, COLOR_LIGHTORANGE, "Would You Like To Play Again?");
+        m_WordRenderer->RenderText(SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 5,COLOR_LIGHTORANGE, "You Lose!");
+        m_WordRenderer->RenderText(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 3,COLOR_LIGHTORANGE, "Would You Like To Play Again?");
         m_PlayAgainButton->Render();
         m_QuitButton->Render();
     }
@@ -343,7 +337,6 @@ int PlayState::doesLetterExist(char letter) const
             cnt++;
         }
     }
-    //std::cout << "Letter " << letter << " exists " << cnt << " times in the word\n";
     return cnt;
 }
 

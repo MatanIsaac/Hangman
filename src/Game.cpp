@@ -1,8 +1,7 @@
 #include "Game.hpp"
 #include <iostream>
 #include <memory>
-#include <exception>  
-#include <direct.h>      
+#include <exception>
 
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp"
@@ -13,18 +12,11 @@
 Game::Game()
     : m_IsRunning(false), m_Window(nullptr), m_Renderer(nullptr), m_CurrentState(nullptr)
 {
-    std::cout << "Game CTOR\n";
     m_Background = nullptr;
-}
-
-Game::~Game()
-{
-    std::cout << "Game DTOR\n";
 }
 
 bool Game::Init(std::string title, int width, int height)
 {
-    std::cout << "Game Init\n";
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << '\n';
@@ -64,7 +56,7 @@ bool Game::Init(std::string title, int width, int height)
     }
 
     m_Background = std::make_unique<Texture>();
-    if (!m_Background->CreateTexture(m_Renderer.get(), "Assets\\bg.jpg"))
+    if (!m_Background->CreateTexture(m_Renderer.get(), "Assets/bg.jpg"))
     {
         std::cerr << "Failed to load background texture!\n";
     }

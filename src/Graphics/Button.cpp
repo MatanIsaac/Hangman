@@ -16,7 +16,7 @@ Button::Button(SDL_Renderer* renderer,const char *buttonText, uint8_t textSize, 
 	m_TextRenderer = new TextRenderer
 	(
 		renderer, 
-		"Assets\\fonts\\Filmcryptic.ttf", 
+		"Assets/fonts/Filmcryptic.ttf", 
 		textSize
 	);
 

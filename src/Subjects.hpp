@@ -46,7 +46,7 @@ typedef struct Subject
         if( subject == Subjects::NONE ) return;
         std::string* subjectName = SubjectToString(subject);
         std::ifstream newFile;
-        auto path = "Assets\\WordBanks\\" + *subjectName + ".txt";
+        auto path = "Assets/WordBanks/" + *subjectName + ".txt";
         newFile.open(path);
         if (!newFile.is_open()) 
         {
@@ -84,13 +84,11 @@ typedef struct Subject
             return "NONE";
         }
 
-        std::random_device rd; // obtain a random number from hardware
-        std::mt19937 gen(rd()); // seed the generator
-        std::uniform_int_distribution<> distr(0, wordBank.size() - 1); // range is from 0 to wordBank.size() - 1
+        std::random_device rd; 
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distr(0, wordBank.size() - 1);
 
         int randomIndex = distr(gen);
-        printf("Random Index: %d - ", randomIndex);
-        printf("Random Word: %s\n", wordBank[randomIndex].c_str());
         return wordBank[randomIndex];
     }
 } Subject;

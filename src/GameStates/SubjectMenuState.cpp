@@ -8,8 +8,6 @@
 SubjectMenuState::SubjectMenuState(Game* game)
     : m_Game(game)
 {
-    std::cout << "SubjectMenu CTOR\n";
-
     m_CurrentSubject = Subject::Subjects::NONE;
 
 	glm::vec2 foodButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f, ( SCREEN_HEIGHT / 3.f ) ) );
@@ -21,15 +19,14 @@ SubjectMenuState::SubjectMenuState(Game* game)
     m_TextRenderer.reset(new TextRenderer
 	(
 		game->GetRenderer(),
-		"Assets\\fonts\\Filmcryptic.ttf",
+		"Assets/fonts/Filmcryptic.ttf",
 		40
 	));
 }
 
 SubjectMenuState::~SubjectMenuState()
 {
-    std::cout << "SubjectMenu DTOR\n";
-    Clean();
+    Clean(); 
 }
 
 void SubjectMenuState::ProcessInput()
@@ -63,7 +60,6 @@ void SubjectMenuState::ProcessInput()
 			m_SubjectCountries->SetButtonLock(false);
             m_CurrentSubject = Subject::Subjects::COUNTRIES;
 			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-			std::cout << "Random word: " << randomWord << '\n';
             PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
 			m_Game->ChangeState(GameStateType::PLAY,playState);
 		}

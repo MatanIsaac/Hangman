@@ -10,8 +10,6 @@
 MenuState::MenuState(Game* game)
 	: m_Game(game)
 {
-	std::cout << "Menu CTOR\n";
-
 	float xAxisCenter = SCREEN_WIDTH / 2.f;
 
 	glm::vec2 playButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) ) );
@@ -23,14 +21,13 @@ MenuState::MenuState(Game* game)
 	m_TextRenderer.reset(new TextRenderer 
 	(
 		game->GetRenderer(),
-		"Assets\\fonts\\Filmcryptic.ttf",
+		"Assets/fonts/Filmcryptic.ttf",
 		40
 	));
 }
 
 MenuState::~MenuState()
 {
-	std::cout << "Menu DTOR\n";
 	Clean();
 }
 

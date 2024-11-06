@@ -29,7 +29,7 @@ class Game
 {
 public:
     Game();
-    ~Game();
+    ~Game() = default;
 
     void RunGame();
     void QuitGame() { m_IsRunning = false; }
