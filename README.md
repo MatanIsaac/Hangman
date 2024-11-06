@@ -10,18 +10,18 @@ Developed over a few weeks as a side project while pursuing my Computer Science 
 
 ### <div align="center">The Game Objective</div>
 
-    A simple remake of the hangman game, pick a subject, guess correctly and continue to the next word
-    guess wrong 6 times and you lose and have to restart the game.
+A simple remake of the hangman game, pick a subject, guess correctly and continue to the next word
+guess wrong 6 times and you lose and have to restart the game.
 
 ### <div align="center">Libraries Used</div>
 
 The libraries comes with the project so no need to download them yourself.
 
 
-    (included in the repo)
-    SDL2 library
-    SDL2 extensions: SDL2_image, SDL2_mixer, SDL2_ttf
-    OpenGL Mathematics (GLM) library 
+Included in the repo:
+* SDL2 library
+* SDL2 extensions: SDL2_image, SDL2_mixer, SDL2_ttf
+* OpenGL Mathematics (GLM) library 
 
 ### <div align="center">Building from Source</div>
 
@@ -31,17 +31,19 @@ If you're working with a different IDE, you might need to adjust the setup to co
 ### <div align="center">Prerequisites</div>
 
 Before building and running this project, ensure you have the following prerequisites installed and configured on your system:
-    GCC Compiler: You need a working GCC compiler. It is often used with MinGW on Windows for building cross-platform applications.
-    GNU Make: Ensure that make is installed on your system. This is usually included with MinGW, but if it's missing, you can install it separately.
+
+* GCC Compiler: You need a working GCC compiler. It is often used with MinGW on Windows for building cross-platform applications.
+* GNU Make: Ensure that make is installed on your system. This is usually included with MinGW, but if it's missing, you can install it separately.
+
 SDL2, its extensions, and glm are included already, so there's no need to download them.
 
 ### <div align="center">Build Instructions</div>
 
-    Clone the Repository: git clone https://github.com/MatanIsaac/Hangman
-    Open The Command Prompt
-    Navigate to Project Directory
-    Run make
-    To Play the Game Simply Run: run for windows or ./run.sh for linux 
+* Clone the Repository: git clone https://github.com/MatanIsaac/Hangman
+* Open The Command Prompt
+* Navigate to Project Directory
+* Run make
+* To Play the Game Simply Run: run for windows or ./run.sh for linux (or run manually, the executable's in the build directory) 
 
         
 You are encouraged to use, modify, and enhance the code as you see fit, only give a credit - Copyright (c) 2024 MatanIsaac.
