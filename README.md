@@ -43,8 +43,10 @@ SDL2, its extensions, and glm are included already, so there's no need to downlo
 * Open The Command Prompt
 * Navigate to Project Directory
 * Run make
-* To Play the Game Simply Run: run for windows or ./run.sh for linux (or run manually, the executable's in the build directory) 
 
+To Play the Game:
+* Windows - Simply Enter 'run'
+* Linux - Simply Enter './run.sh' (may need to enter 'chmod +x run.sh' beforehand). 
         
 You are encouraged to use, modify, and enhance the code as you see fit, only give a credit - Copyright (c) 2024 MatanIsaac.
 
