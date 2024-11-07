@@ -45,8 +45,9 @@ ifeq ($(OS), Windows_NT)
     EXE_EXT = .exe
     RM = cmd /C del /Q /F
     RMDIR = cmd /C rmdir /S /Q
-
-    # Include directories (add any directories containing header files)
+    MKDIR = mkdir $(subst /,\,$(dir $@)) 2> NUL || exit 0 
+    
+	# Include directories (add any directories containing header files)
     INCLUDE_DIRS = -Iinclude -Iinclude/SDL2 -Isrc
 
     # Library directories (add directories containing libraries)
@@ -62,7 +63,9 @@ else
     EXE_EXT =
     RM = rm -f
     RMDIR = rm -rf
-    # SDL2 Flags
+    MKDIR = mkdir -p $(dir $@)
+    
+	# SDL2 Flags
     SDL_CFLAGS := $(shell sdl2-config --cflags)
     SDL_LIBS := $(shell sdl2-config --libs)
     # Include directories (add any directories containing header files)
@@ -84,7 +87,7 @@ $(BUILD_DIR)/$(TARGET)$(EXE_EXT): $(OBJS)
 
 # Compile each source file into an object file in the build directory
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p $(dir $@)
+	$(MKDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Include the generated .d files
@@ -92,14 +95,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 # Copy assets folder to build directory
 copy_assets: $(BUILD_DIR) copy_dll
-	@echo ""
 	@echo "Copying Necessary Assets.."
-	mkdir -p $(BUILD_ASSETS_DIR)
+	@$(MKDIR) $(BUILD_ASSETS_DIR)
 	@$(COPY_CMD)
-	@echo ""
-    
-ifeq ($(OS), Windows_NT) 
 
+ifeq ($(OS), Windows_NT) 
 # DLLs to copy individually for Windows
 copy_dll: 
 	@cmd /C "xcopy DLLs\SDL2.dll $(BUILD_DIR) /y /q > NUL 2>&1"
