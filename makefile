@@ -42,10 +42,16 @@ endif
 # Detect OS and set variables based on the environment
 ifeq ($(OS), Windows_NT)
     # Windows settings
+    SHELL = cmd.exe
+    .SHELLFLAGS = /C
+    
     EXE_EXT = .exe
     RM = cmd /C del /Q /F
     RMDIR = cmd /C rmdir /S /Q
-    MKDIR = mkdir $(subst /,\,$(dir $@)) 2> NUL || exit 0 
+    
+    # Function to remove trailing slashes and convert to backslashes
+    fixpath = $(subst /,\,$(patsubst %/,%,$1))
+    MKDIR = mkdir $(call fixpath,$(dir $@)) 2> NUL || exit 0
     
 	# Include directories (add any directories containing header files)
     INCLUDE_DIRS = -Iinclude -Iinclude/SDL2 -Isrc
