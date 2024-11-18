@@ -62,8 +62,8 @@ ifeq ($(OS), Windows_NT)
     # Compiler Flags
     CFLAGS = -Wall -std=c++17 $(INCLUDE_DIRS) -MMD -MP -DSDL_MAIN_HANDLED
 
-    # Libraries to link (static linking)
-    LIBS = $(LIB_DIRS) -lmingw32 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image #-mwindows
+    # Libraries to link (static linking) -mwindows
+    LIBS = $(LIB_DIRS) -lmingw32 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image 
 else
     # Unix-like system settings (Linux, macOS)
     EXE_EXT =
@@ -141,6 +141,7 @@ help:
 	@echo ""
 	@echo "On **Linux**:"
 	@echo "  - Ensure you have g++ and SDL2 development packages installed."
+	@echo "  - Ensure to run sudo apt update && sudo apt upgrade before continuing.
 	@echo "    Install them using your package manager, e.g.:"
 	@echo "      sudo apt-get install build-essential libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
 	@echo "  - Run 'make' in the terminal."
