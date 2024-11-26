@@ -32,44 +32,26 @@ SubjectMenuState::~SubjectMenuState()
 void SubjectMenuState::ProcessInput()
 {
     m_SubjectFood->ProcessInput();
-	if (m_SubjectFood)
+	if (m_SubjectFood->isPressed())
 	{
-		if (m_SubjectFood->isButtonPressed() && !m_SubjectFood->GetButtonLocked())
-		{
-			m_SubjectFood->SetButtonLock(true);
-		}
-		else if (!m_SubjectFood->isButtonPressed() && m_SubjectFood->GetButtonLocked())
-		{
-			m_SubjectFood->SetButtonLock(false);
-            m_CurrentSubject = Subject::Subjects::FOOD;
-			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-            PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
-			m_Game->ChangeState(GameStateType::PLAY,playState);
-		}
+        m_CurrentSubject = Subject::Subjects::FOOD;
+		std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
+        PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
+		m_Game->ChangeState(GameStateType::PLAY,playState);
 	}
 
 	m_SubjectCountries->ProcessInput();
-	if (m_SubjectCountries)
+	if (m_SubjectCountries->isPressed())
 	{
-		if (m_SubjectCountries->isButtonPressed() && !m_SubjectCountries->GetButtonLocked())
-		{
-			m_SubjectCountries->SetButtonLock(true);
-		}
-		else if (!m_SubjectCountries->isButtonPressed() && m_SubjectCountries->GetButtonLocked())
-		{
-			m_SubjectCountries->SetButtonLock(false);
-            m_CurrentSubject = Subject::Subjects::COUNTRIES;
-			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-            PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
-			m_Game->ChangeState(GameStateType::PLAY,playState);
-		}
+        m_CurrentSubject = Subject::Subjects::COUNTRIES;
+		std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
+        PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
+		m_Game->ChangeState(GameStateType::PLAY,playState);
 	}
 }
 
 void SubjectMenuState::Update( float deltaTime )
-{
-
-}
+{ }
 
 void SubjectMenuState::Render( SDL_Renderer* renderer )
 {
@@ -86,5 +68,5 @@ void SubjectMenuState::Render( SDL_Renderer* renderer )
 
 void SubjectMenuState::Clean()
 {
-    delete m_Game; 
+
 }

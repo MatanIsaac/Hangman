@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <random>
 
-typedef struct Subject
+namespace Subject
 {
     enum struct Subjects
     {
@@ -91,7 +91,7 @@ typedef struct Subject
         int randomIndex = distr(gen);
         return wordBank[randomIndex];
     }
-} Subject;
+};
 
 
 

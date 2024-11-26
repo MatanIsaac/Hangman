@@ -27,30 +27,31 @@ public:
 	void Render();
 	void Clean();
 
-	bool isMouseButtonPressed(Uint32 button) const;
-	bool isMouseButtonReleased(Uint32 button) const;
-
-	bool isButtonPressed() const { return m_IsButtonPressed; }
-
-	void ResetButton() { m_IsButtonPressed = false; }
-
-	const glm::vec2& GetOriginalPosition() const { return m_OriginalPosition; }
+	bool isPressed();
+	
+	bool GetButtonLocked() const { return m_ButtonLocked; }	
+	uint8_t GetButtonSize() const { return m_ButtonSize; }
+	const char* GetButtonText() const { return m_ButtonText.c_str(); }
 	const glm::vec2& GetPosition() const { return m_Position; }
+	
 	void SetPosition(const glm::vec2& newPosition);
 
  	void ApplySineAnimation(float deltaTime, float frequency, float amplitude, float phaseOffset);
+private:
+	bool isButtonDown() const { return m_IsButtonDown; }
+	bool isMouseButtonPressed(Uint32 button) const;
+	bool isMouseButtonReleased(Uint32 button) const;
 
-	uint8_t GetButtonSize() const { return m_ButtonSize; }
-
-	bool GetButtonLocked() const { return m_ButtonLocked; }	
+	void ResetButton() { m_IsButtonDown = false; }
 	void SetButtonLock(bool lock) {  m_ButtonLocked = lock; }	
 
-	const char* GetButtonText() const { return m_ButtonText.c_str(); }
+	const glm::vec2& GetOriginalPosition() const { return m_OriginalPosition; } /* used for sine animations */
+
 private:
-	bool m_IsButtonPressed = false;
+	bool m_IsButtonDown = false;
 	bool m_ButtonLocked = false;
 
-	TextRenderer* m_TextRenderer;
+	std::unique_ptr<TextRenderer,TextRendererDeleter> m_TextRenderer;
 
 	std::string m_ButtonText;
 	uint8_t m_ButtonSize;

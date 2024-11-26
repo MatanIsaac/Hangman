@@ -34,33 +34,16 @@ MenuState::~MenuState()
 void MenuState::ProcessInput()
 {
 	m_PlayButton->ProcessInput();
-	if (m_PlayButton)
+	if (m_PlayButton->isPressed())
 	{
-		if (m_PlayButton->isButtonPressed() && !m_PlayButton->GetButtonLocked())
-		{
-			m_PlayButton->SetButtonLock(true);
-		}
-		else if (!m_PlayButton->isButtonPressed() && m_PlayButton->GetButtonLocked())
-		{
-			m_PlayButton->SetButtonLock(false);
-			m_Game->ChangeState(GameStateType::SUBJECT);
-		}
+		m_Game->ChangeState(GameStateType::SUBJECT);
 	}
 
 	m_QuitButton->ProcessInput();
-    if (m_QuitButton)
+	if (m_QuitButton->isPressed())
 	{
-        if (m_QuitButton->isButtonPressed() && !m_QuitButton->GetButtonLocked())
-		{
-            m_QuitButton->SetButtonLock(true);
-		}
-        else if (!m_QuitButton->isButtonPressed() && m_QuitButton->GetButtonLocked())
-        {
-            m_QuitButton->SetButtonLock(false);
-			m_Game->QuitGame();	
-        }
+		m_Game->QuitGame();	   
 	}
-
 }
 
 void MenuState::Update( float deltaTime )
@@ -79,6 +62,6 @@ void MenuState::Render( SDL_Renderer* renderer )
 void MenuState::Clean()
 {
 	m_PlayButton->Clean();
-	delete m_Game;
+	m_QuitButton->Clean();
 }
 

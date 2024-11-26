@@ -4,7 +4,7 @@
 #include <SDL_mouse.h>
 
 Button::Button(SDL_Renderer* renderer,const char *buttonText, uint8_t textSize, const glm::vec2 &position)
-	: m_IsButtonPressed(false),
+	: m_IsButtonDown(false),
 	  m_ButtonLocked(false),
 	  m_ButtonText(buttonText),
 	  m_ButtonSize(textSize),
@@ -13,11 +13,10 @@ Button::Button(SDL_Renderer* renderer,const char *buttonText, uint8_t textSize, 
 	  m_ElapsedTime(0.f)
 {
 
-	m_TextRenderer = new TextRenderer
+	m_TextRenderer = std::unique_ptr<TextRenderer, TextRendererDeleter>
 	(
-		renderer, 
-		"Assets/fonts/Filmcryptic.ttf", 
-		textSize
+    	new TextRenderer(renderer, "Assets/fonts/Filmcryptic.ttf", textSize),
+    	TextRendererDeleter()
 	);
 
 	m_ButtonAction = ButtonAction::BUTTON_OUT;
@@ -46,16 +45,16 @@ void Button::ProcessInput()
 	{
 		if (isLeftMousePressed)
 		{
-			if (!m_IsButtonPressed)
+			if (!m_IsButtonDown)
 			{
 				m_ButtonAction = ButtonAction::BUTTON_PRESSED;
-				m_IsButtonPressed = true;
+				m_IsButtonDown = true;
 			}
 		}
-		else if (m_IsButtonPressed)
+		else if (m_IsButtonDown)
 		{
 			m_ButtonAction = ButtonAction::BUTTON_RELEASED;
-			m_IsButtonPressed = false;
+			m_IsButtonDown = false;
 		}
 		else
 		{
@@ -96,10 +95,21 @@ void Button::Render()
 
 void Button::Clean()
 {
-	if (m_TextRenderer)
+}
+
+bool Button::isPressed()
+{
+    if (isButtonDown() && !GetButtonLocked())
 	{
-		m_TextRenderer->Clean();
+        SetButtonLock(true);
 	}
+    else if (!isButtonDown() && GetButtonLocked())
+    {
+        SetButtonLock(false);
+		return true;	
+    }
+	
+	return false;
 }
 
 bool Button::isMouseButtonPressed(Uint32 button) const
@@ -129,16 +139,6 @@ void Button::ApplySineAnimation(float deltaTime,
 	buttonPos.y += easedSineWave;
 	SetPosition(buttonPos);
 }
-
-/*const glm::vec2& Button::GetButtonSize() const
-{
-	std::cout << "Button size: " << m_TextRenderer->GetScale().x << " " << m_TextRenderer->GetScale().y << '\n';
-	return m_TextRenderer->GetScale();
-	//const auto &buttonSize = m_TextRenderer->GetScale();
-	//auto buttonW = m_Position.x + buttonSize.x;
-	//auto buttonH = m_Position.y + buttonSize.y;
-	//return glm::vec2(buttonW, buttonH);
-}*/
 
 void Button::SetPosition(const glm::vec2& newPosition) 
 {

@@ -104,13 +104,9 @@ void PlayState::ProcessInput()
                 return;
             }
 
-            if (button->isButtonPressed() && !button->GetButtonLocked())
+            
+            if (!button->isPressed())
             {
-                button->SetButtonLock(true);
-            }
-            else if (!button->isButtonPressed() && button->GetButtonLocked())
-            {
-                button->SetButtonLock(false);
                 std::string letter = button->GetButtonText();
                 int letterExists = doesLetterExist(letter[0]);
                 if(letterExists == 1)
@@ -168,28 +164,15 @@ void PlayState::ProcessInput()
     else
     {
         m_PlayAgainButton->ProcessInput();
-        if(m_PlayAgainButton->isButtonPressed() && !m_PlayAgainButton->GetButtonLocked())
+        if(m_PlayAgainButton->isPressed())
         {
-            m_PlayAgainButton->SetButtonLock(true);
-        }
-        else if(!m_PlayAgainButton->isButtonPressed() && m_PlayAgainButton->GetButtonLocked())
-        {
-            m_PlayAgainButton->SetButtonLock(false);
             m_Game->ChangeState(GameStateType::SUBJECT);
         }
 
         m_QuitButton->ProcessInput();
-        if (m_QuitButton)
+        if (m_QuitButton->isPressed())
         {
-            if (m_QuitButton->isButtonPressed() && !m_QuitButton->GetButtonLocked())
-            {
-                m_QuitButton->SetButtonLock(true);
-            }
-            else if (!m_QuitButton->isButtonPressed() && m_QuitButton->GetButtonLocked())
-            {
-                m_QuitButton->SetButtonLock(false);
-                m_Game->QuitGame();	
-            }
+            m_Game->QuitGame();	
         }
     }    
 }
@@ -298,7 +281,6 @@ void PlayState::Render( SDL_Renderer* renderer )
 
 void PlayState::Clean()
 {
-	delete m_Game;
 }
 
 

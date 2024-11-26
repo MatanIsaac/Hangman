@@ -109,7 +109,6 @@ void Game::HandleEvents()
 void Game::Update(float deltaTime)
 {
     m_CurrentState->Update(0.0f);
-
 }
 
 void Game::Render()
@@ -127,8 +126,6 @@ void Game::Render()
 
 void Game::Clean()
 {
-    delete m_CurrentState;
-
     SDL_Quit();
 }
 
