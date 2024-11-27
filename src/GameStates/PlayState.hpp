@@ -11,6 +11,7 @@
 #include "Graphics/Button.hpp"
 #include "../Subjects.hpp"
 #include "Core/GameStateManager.hpp"
+#include "Util/Timer.hpp"
 
 namespace isaac_hangman
 {
@@ -30,7 +31,7 @@ namespace isaac_hangman
 	private:
 		void FillLetterBank();
 		void RenderLinePerLetter();
-
+		void SetStickman();
 	private:
 		GameStateManager& m_GameStateManager;
 		std::string m_Word;
@@ -47,8 +48,10 @@ namespace isaac_hangman
 		std::vector<char> m_WordChars; 
 		std::vector<std::pair<char, glm::ivec2>> m_StickmanParts;
 		std::vector<std::pair<char, glm::ivec2>> m_PoleParts;
+		std::unique_ptr<Button> m_NextWordButton;
 		std::unique_ptr<Button> m_BackToSubjectsButton;
 		std::unique_ptr<Button> m_QuitButton;
 		Subject::Subjects m_CurrentSubject;
+		Timer m_Timer;
 	};
 }

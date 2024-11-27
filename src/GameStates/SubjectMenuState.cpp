@@ -11,6 +11,9 @@ namespace isaac_hangman
 	{	
 		m_CurrentSubject = Subject::Subjects::NONE;
 
+		glm::vec2 backButtonPosition( glm::vec2( 35.f, SCREEN_HEIGHT - 85.f ) );
+		m_BackToMenuButton = std::make_unique<Button>("Back To Main Menu", 24,backButtonPosition);
+
 		glm::vec2 foodButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f, ( SCREEN_HEIGHT / 3.f ) ) );
 		m_SubjectFoodButton.reset(new Button("FOOD", 36, foodButtonPosition));
 
@@ -35,16 +38,23 @@ namespace isaac_hangman
 			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
 			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
 		}
+
+		if(m_BackToMenuButton->isPressed())
+		{
+			m_GameStateManager.PopState();
+		}
 	}
 
 	void SubjectMenuState::Update( float deltaTime )
 	{ 
+		m_BackToMenuButton->Update(deltaTime);
 		m_SubjectFoodButton->Update(deltaTime);
 		m_SubjectCountriesButton->Update(deltaTime);
 	}
 
 	void SubjectMenuState::Render()
 	{
+		m_BackToMenuButton->Render();
 		m_SubjectFoodButton->Render();
 		m_SubjectCountriesButton->Render();
 		m_TextRenderer->RenderText

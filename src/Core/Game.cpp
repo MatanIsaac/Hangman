@@ -13,7 +13,7 @@
 
 namespace isaac_hangman
 {
-    Game::Game() : m_StateManager(), m_IsRunning(false)
+    Game::Game() : m_StateManager()
     {
         m_Background = nullptr;
     }
@@ -57,8 +57,8 @@ namespace isaac_hangman
 
         m_StateManager.PushState(std::make_shared<MenuState>(m_StateManager));
 
-        m_IsRunning = true;
-        while (m_IsRunning)
+        GameContext::GetInstance().m_IsRunning = true;
+        while (GameContext::GetInstance().m_IsRunning)
         {
             HandleEvents();
             Update(0.0f);
@@ -66,6 +66,11 @@ namespace isaac_hangman
         }
 
         Clean();
+    }
+
+    void Game::Quit()
+    {
+        GameContext::GetInstance().m_IsRunning = false;
     }
 
     void Game::HandleEvents()
@@ -78,12 +83,12 @@ namespace isaac_hangman
             switch (event.type)
             {
             case SDL_QUIT:
-                m_IsRunning = false;
+                GameContext::GetInstance().m_IsRunning = false;
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                 {
-                    m_IsRunning = false;
+                    GameContext::GetInstance().m_IsRunning = false;
                 }
                 break;
             }

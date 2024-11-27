@@ -26,6 +26,7 @@ namespace isaac_hangman
 
 		std::unique_ptr<Button> m_SubjectFoodButton;
 		std::unique_ptr<Button> m_SubjectCountriesButton;
+		std::unique_ptr<Button> m_BackToMenuButton;
 		std::unique_ptr<TextRenderer> m_TextRenderer;
 		Subject::Subjects m_CurrentSubject;
 	};

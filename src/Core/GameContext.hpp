@@ -20,6 +20,10 @@ namespace isaac_hangman
         GameContext(GameContext&&) = delete;
         GameContext& operator=(GameContext&&) = delete;
 
+        UniqueWindow m_Window;
+        UniqueRenderer m_Renderer;
+        bool m_IsRunning = false;
+
         // Access the single instance of GameContext
         static GameContext& GetInstance()
         {
@@ -101,8 +105,5 @@ namespace isaac_hangman
         {
             Clean();
         }
-
-        UniqueWindow m_Window;
-        UniqueRenderer m_Renderer;
     };
 }

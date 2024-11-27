@@ -1,10 +1,11 @@
 #include "MenuState.hpp"
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp"
+#include "SubjectMenuState.hpp"
+#include "Core/GameContext.hpp"
 
 #include <glm/glm.hpp>
 #include <iostream>
-#include "SubjectMenuState.hpp"
 
 namespace isaac_hangman
 {
@@ -31,7 +32,7 @@ namespace isaac_hangman
 
 		if (m_QuitButton->isPressed())
 		{
-				
+			GameContext::GetInstance().m_IsRunning = false;
 		}
 	}
 
