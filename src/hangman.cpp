@@ -1,10 +1,11 @@
-//#define SDL_MAIN_HANDLED 
 #include <iostream>
-#include "Game.hpp"
+#include "Core/Game.hpp"
+
+using namespace isaac_hangman;
 
 int main(int argc, char* argv[]) 
 {
     Game game;
-    game.RunGame();
+    game.Run();
     return 0;
 }

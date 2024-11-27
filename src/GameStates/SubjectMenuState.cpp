@@ -1,72 +1,58 @@
 #include "SubjectMenuState.hpp"
-#include "Game.hpp"
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp" 
 #include "GameStates/PlayState.hpp"
 #include <iostream>
 
-SubjectMenuState::SubjectMenuState(Game* game)
-    : m_Game(game)
+namespace isaac_hangman
 {
-    m_CurrentSubject = Subject::Subjects::NONE;
+	SubjectMenuState::SubjectMenuState(GameStateManager& stateManager)
+		: m_GameStateManager(stateManager)
+	{	
+		m_CurrentSubject = Subject::Subjects::NONE;
 
-	glm::vec2 foodButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f, ( SCREEN_HEIGHT / 3.f ) ) );
-	m_SubjectFood.reset(new Button(game->GetRenderer(), "FOOD", 36, foodButtonPosition));
+		glm::vec2 foodButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f, ( SCREEN_HEIGHT / 3.f ) ) );
+		m_SubjectFoodButton.reset(new Button("FOOD", 36, foodButtonPosition));
 
-	glm::vec2 countriesButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f + 100, ( SCREEN_HEIGHT / 3.f ) ) );
-	m_SubjectCountries.reset(new Button(game->GetRenderer(), "COUNTRIES", 36, countriesButtonPosition));
+		glm::vec2 countriesButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f + 100, ( SCREEN_HEIGHT / 3.f ) ) );
+		m_SubjectCountriesButton.reset(new Button("COUNTRIES", 36, countriesButtonPosition));
 
-    m_TextRenderer.reset(new TextRenderer
-	(
-		game->GetRenderer(),
-		"Assets/fonts/Filmcryptic.ttf",
-		40
-	));
-}
-
-SubjectMenuState::~SubjectMenuState()
-{
-    Clean(); 
-}
-
-void SubjectMenuState::ProcessInput()
-{
-    m_SubjectFood->ProcessInput();
-	if (m_SubjectFood->isPressed())
-	{
-        m_CurrentSubject = Subject::Subjects::FOOD;
-		std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-        PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
-		m_Game->ChangeState(GameStateType::PLAY,playState);
+		m_TextRenderer = std::make_unique<TextRenderer>(40);
 	}
 
-	m_SubjectCountries->ProcessInput();
-	if (m_SubjectCountries->isPressed())
+	void SubjectMenuState::ProcessInput()
 	{
-        m_CurrentSubject = Subject::Subjects::COUNTRIES;
-		std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-        PlayState* playState = new PlayState(m_Game, randomWord, m_CurrentSubject);
-		m_Game->ChangeState(GameStateType::PLAY,playState);
+		if (m_SubjectFoodButton->isPressed())
+		{
+			m_CurrentSubject = Subject::Subjects::FOOD;
+			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
+			m_GameStateManager.SetState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
+		}
+		
+		if (m_SubjectCountriesButton->isPressed())
+		{
+			m_CurrentSubject = Subject::Subjects::COUNTRIES;
+			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
+			m_GameStateManager.SetState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
+		}
 	}
-}
 
-void SubjectMenuState::Update( float deltaTime )
-{ }
+	void SubjectMenuState::Update( float deltaTime )
+	{ 
+		m_SubjectFoodButton->Update(deltaTime);
+		m_SubjectCountriesButton->Update(deltaTime);
+	}
 
-void SubjectMenuState::Render( SDL_Renderer* renderer )
-{
-    m_SubjectFood->Render();
-    m_SubjectCountries->Render();
-    m_TextRenderer->RenderText
-    (
-        250, 
-        100,
-        COLOR_LIGHTORANGE,
-        "Pick a Subject:"
-    );
-}
-
-void SubjectMenuState::Clean()
-{
-
+	void SubjectMenuState::Render()
+	{
+		m_SubjectFoodButton->Render();
+		m_SubjectCountriesButton->Render();
+		m_TextRenderer->RenderText
+		(
+			250, 
+			100,
+			COLOR_LIGHTORANGE,
+			"Pick a Subject:"
+		);
+	}
 }

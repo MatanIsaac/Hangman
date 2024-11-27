@@ -30,7 +30,7 @@
 #include <functional>
 #include <thread>
 
-namespace venture
+namespace isaac_hangman
 {
     /**
     * @brief A Simple, Versatile <chrono> based Timer utility class for managing time intervals and callbacks.

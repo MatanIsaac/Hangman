@@ -4,25 +4,25 @@
 #include <SDL.h>
 
 #include "IGameState.hpp"
+#include "Core/GameStateManager.hpp"
 #include <Graphics/TextRenderer.hpp>
 #include <Graphics/Button.hpp>
 
-class Game;
-
-
-class MenuState : public IGameState
+namespace isaac_hangman
 {
-public:
-	MenuState(Game* game);
-	~MenuState() override;
-	void ProcessInput() override;
-	void Update( float deltaTime ) override;
-	void Render( SDL_Renderer* renderer ) override;
-	void Clean() override;
+	class MenuState : public IGameState
+	{
+	public:
+		MenuState(GameStateManager& stateManager);
+		~MenuState() override = default;
+		void ProcessInput() override;
+		void Update( float deltaTime ) override;
+		void Render() override;
 
-private:
-	Game* m_Game;
-	std::unique_ptr<Button, ButtonDeleter> m_PlayButton;	
-	std::unique_ptr<Button, ButtonDeleter> m_QuitButton;	
-	std::unique_ptr<TextRenderer, TextRendererDeleter> m_TextRenderer;
-};
+	private:
+		GameStateManager& m_GameStateManager;
+		std::unique_ptr<Button> m_PlayButton;	
+		std::unique_ptr<Button> m_QuitButton;	
+		std::unique_ptr<TextRenderer> m_TextRenderer;
+	};
+}

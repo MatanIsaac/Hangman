@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-namespace venture
+namespace isaac_hangman
 {
 	// Regular Colors
 	#define COLOR_BLACK SDL_Color{0, 0, 0, 255}

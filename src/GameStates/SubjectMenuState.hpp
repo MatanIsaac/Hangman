@@ -6,26 +6,27 @@
 #include "IGameState.hpp"
 #include "Graphics/Button.hpp"
 #include "Graphics/TextRenderer.hpp"
+#include "Core/GameStateManager.hpp"
 #include "../Subjects.hpp"
 
-class Game;
-
-class SubjectMenuState : public IGameState
+namespace isaac_hangman
 {
-public:
-    SubjectMenuState(Game* game);
-    ~SubjectMenuState() override;
+	class SubjectMenuState : public IGameState
+	{
+	public:
+		SubjectMenuState(GameStateManager& stateManager);
+		~SubjectMenuState() override = default;
 
-	void ProcessInput() override;
-	void Update( float deltaTime ) override;
-	void Render( SDL_Renderer* renderer ) override;
-	void Clean() override;
+		void ProcessInput() override;
+		void Update( float deltaTime ) override;
+		void Render() override;
 
-private:
-	Game* m_Game;
+	private:
+		GameStateManager& m_GameStateManager;
 
-	std::unique_ptr<Button,ButtonDeleter> m_SubjectFood;
-	std::unique_ptr<Button,ButtonDeleter> m_SubjectCountries;
-	std::unique_ptr<TextRenderer,TextRendererDeleter> m_TextRenderer;
-	Subject::Subjects m_CurrentSubject;
-};
+		std::unique_ptr<Button> m_SubjectFoodButton;
+		std::unique_ptr<Button> m_SubjectCountriesButton;
+		std::unique_ptr<TextRenderer> m_TextRenderer;
+		Subject::Subjects m_CurrentSubject;
+	};
+}
