@@ -21,8 +21,6 @@ namespace isaac_hangman
         void Run();
         void Quit() { m_IsRunning = false; }
 
-        GameStateManager& GetStateManager() { return m_StateManager; }
-
         private:
         bool Init(std::string title, int width, int height);
 
@@ -31,9 +29,9 @@ namespace isaac_hangman
         void Render();
         void Clean();
 
-        bool m_IsRunning;
-
+    private:
         GameStateManager m_StateManager;
+        bool m_IsRunning;
 
         std::unique_ptr<Texture> m_Background;
     };

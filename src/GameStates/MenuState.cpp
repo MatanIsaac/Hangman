@@ -26,7 +26,7 @@ namespace isaac_hangman
 	{	
 		if (m_PlayButton->isPressed())
 		{		
-			m_GameStateManager.SetState(std::make_shared<SubjectMenuState>(m_GameStateManager));
+			m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager));
 		}
 
 		if (m_QuitButton->isPressed())

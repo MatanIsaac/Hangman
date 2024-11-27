@@ -13,7 +13,7 @@
 
 namespace isaac_hangman
 {
-    Game::Game() : m_IsRunning(false)
+    Game::Game() : m_StateManager(), m_IsRunning(false)
     {
         m_Background = nullptr;
     }
@@ -55,7 +55,7 @@ namespace isaac_hangman
             return;
         }
 
-        m_StateManager.SetState(std::make_shared<SubjectMenuState>(m_StateManager));
+        m_StateManager.PushState(std::make_shared<MenuState>(m_StateManager));
 
         m_IsRunning = true;
         while (m_IsRunning)

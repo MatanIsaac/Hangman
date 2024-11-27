@@ -19,7 +19,7 @@ namespace isaac_hangman
 	{
 	public:
 		PlayState(GameStateManager& stateManager,const std::string& randomWord, Subject::Subjects subject);
-		~PlayState() override = default;
+		~PlayState() override {};
 		
 		void ProcessInput() override;
 		void Update( float deltaTime ) override;

@@ -150,7 +150,8 @@ namespace isaac_hangman
         {
             if(m_BackToSubjectsButton->isPressed())
             {
-                m_GameStateManager.SetState(std::make_shared<SubjectMenuState>(m_GameStateManager));
+                m_GameStateManager.PopState();
+                m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager));
             }
 
             if (m_QuitButton->isPressed())

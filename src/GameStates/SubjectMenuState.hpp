@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "IGameState.hpp"
 #include "Graphics/Button.hpp"
@@ -15,7 +15,7 @@ namespace isaac_hangman
 	{
 	public:
 		SubjectMenuState(GameStateManager& stateManager);
-		~SubjectMenuState() override = default;
+		~SubjectMenuState() override {};
 
 		void ProcessInput() override;
 		void Update( float deltaTime ) override;

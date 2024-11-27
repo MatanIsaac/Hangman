@@ -26,14 +26,14 @@ namespace isaac_hangman
 		{
 			m_CurrentSubject = Subject::Subjects::FOOD;
 			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-			m_GameStateManager.SetState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
+			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
 		}
 		
 		if (m_SubjectCountriesButton->isPressed())
 		{
 			m_CurrentSubject = Subject::Subjects::COUNTRIES;
 			std::string randomWord = Subject::GetRandomWord(m_CurrentSubject);
-			m_GameStateManager.SetState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
+			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
 		}
 	}
 

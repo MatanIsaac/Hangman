@@ -14,7 +14,7 @@ namespace isaac_hangman
 	{
 	public:
 		MenuState(GameStateManager& stateManager);
-		~MenuState() override = default;
+		~MenuState() override {}
 		void ProcessInput() override;
 		void Update( float deltaTime ) override;
 		void Render() override;
