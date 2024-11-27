@@ -15,12 +15,14 @@ namespace isaac_hangman
 	public:
 		MenuState(GameStateManager& stateManager);
 		~MenuState() override {}
+
 		void ProcessInput() override;
 		void Update( float deltaTime ) override;
 		void Render() override;
 
 	private:
 		GameStateManager& m_GameStateManager;
+		
 		std::unique_ptr<Button> m_PlayButton;	
 		std::unique_ptr<Button> m_QuitButton;	
 		std::unique_ptr<TextRenderer> m_TextRenderer;

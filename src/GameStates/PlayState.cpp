@@ -74,6 +74,7 @@ namespace isaac_hangman
 
     void PlayState::ProcessInput()
     {
+        /*
         if(m_Lose == false)
         {
             if(!m_SpaceRemoved && doesLetterExist(' ') == 1)
@@ -159,6 +160,7 @@ namespace isaac_hangman
                 //m_Game->Quit();	
             }
         }    
+        */
     }
 
     void PlayState::Update( float deltaTime )

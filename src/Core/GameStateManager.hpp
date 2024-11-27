@@ -8,7 +8,15 @@ namespace isaac_hangman
     class GameStateManager
     {
     public:
-        // Push a new state onto the stack
+        GameStateManager() = default;
+        ~GameStateManager()
+        {
+            while(m_StateStack.size() > 0)
+            {
+                m_StateStack.pop();
+            }
+        }
+
         void PushState(std::shared_ptr<IGameState> newState)
         {
             m_StateStack.push(newState);
