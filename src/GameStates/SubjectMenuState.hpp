@@ -15,19 +15,18 @@ namespace isaac_hangman
 	{
 	public:
 		SubjectMenuState(GameStateManager& stateManager);
-		~SubjectMenuState() override {};
+		~SubjectMenuState() = default;
 
 		void ProcessInput() override;
 		void Update( float deltaTime ) override;
 		void Render() override;
 
 	private:
-		GameStateManager& m_GameStateManager;
-
-		std::unique_ptr<Button> m_SubjectFoodButton;
-		std::unique_ptr<Button> m_SubjectCountriesButton;
-		std::unique_ptr<Button> m_BackToMenuButton;
-		std::unique_ptr<TextRenderer> m_TextRenderer;
-		Subject::Subjects m_CurrentSubject;
+		GameStateManager& 	m_GameStateManager;
+		Subjects 			m_CurrentSubject;
+		UniqueButton 		m_SubjectFoodButton;
+		UniqueButton 		m_SubjectCountriesButton;
+		UniqueButton 		m_BackToMenuButton;
+		UniqueTextRenderer 	m_TextRenderer;
 	};
 }

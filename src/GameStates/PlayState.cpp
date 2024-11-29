@@ -11,22 +11,40 @@
 
 namespace isaac_hangman
 {
-        
-    PlayState::PlayState(GameStateManager& stateManager,const std::string& randomWord, Subject::Subjects subject)
+
+    PlayState::PlayState(GameStateManager& stateManager,const std::string& randomWord, Subjects subject)
         : m_GameStateManager(stateManager),m_Word(randomWord), m_CurrentSubject(subject)
     {
-        m_WrongGuesses = 0;
-        m_Lose = false;
-        m_SpaceRemoved = false;
+        //std::cout << "\n\tWord: " << randomWord << '\n';
+        m_WrongGuesses  = 0;
+        m_Lose          = false;
+        m_SpaceRemoved  = false;
 
         m_Timer.Start();
         FillLetterBank(); 
+        
+
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+        //m_LettersButtons.emplace_back("ABS",36,glm::vec2{353.f,34.f});
+    
         auto time = m_Timer.Stop();
         std::cout << "Took: " << time << " Seconds\n";
 
         m_WordRenderer = std::make_unique<TextRenderer>(35);
 
-        m_PartsRenderer = std::make_unique<TextRenderer>(90);
+        m_StickmanRenderer = std::make_unique<TextRenderer>(90);
+             
+
+
+
         
         float xAxisCenter = SCREEN_WIDTH / 2.f;
 
@@ -34,10 +52,10 @@ namespace isaac_hangman
         m_NextWordButton = std::make_unique<Button>("Next Word",36,nextWordButtonPosition);
 
         glm::vec2 BackButtonPosition( glm::vec2( xAxisCenter, ( SCREEN_HEIGHT / 2.5f ) )  );
-        m_BackToSubjectsButton.reset(new Button("Back To Subjects", 36, BackButtonPosition));
+        m_BackToSubjectsButton = std::make_unique<Button>("Back To Subjects", 36, BackButtonPosition);
 
         glm::vec2 quitButtonPosition( glm::vec2( 35.f, SCREEN_HEIGHT - 85.f ) );
-        m_QuitButton.reset(new Button("Quit", 36, quitButtonPosition)); 
+        m_QuitButton = std::make_unique<Button>("Quit", 36, quitButtonPosition); 
 
         SetStickman();
 
@@ -59,66 +77,65 @@ namespace isaac_hangman
                 m_SpaceRemoved = true;
             }
             
-            for (Button* button : m_LettersButtons)
+            for (auto& button : m_LettersButtons)
             {
-                if(button == nullptr)
-                    break;
-
-                if (button->isPressed())
+                if (!button.isPressed())
                 {
-                    std::string letter = button->GetButtonText();
-                    int letterExists = 0;doesLetterExist(letter[0]);
-                    
-                    if(letterExists == 1)
-                    { 
-                        auto it = m_LetterToLineMap.find(letter[0]);
-                        if (it != m_LetterToLineMap.end())
-                        {
-                            m_WordChars.push_back(letter[0]);
-                            m_LetterToLineMap.erase(it);
-                        }
-                        m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
-                            [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
-                    }
-                    else if(letterExists == 2)
-                    {
-                        auto it = m_LetterToLineMap.find(letter[0]);
-                        if (it != m_LetterToLineMap.end())
-                        {
-                            m_WordChars.push_back(letter[0]);
-                            m_WordChars.push_back(letter[0]);
-                            m_LetterToLineMap.erase(it);
-                            auto it2 = m_LetterToLineMap.find(letter[0]);
-                            if (it2 != m_LetterToLineMap.end()) m_LetterToLineMap.erase(it2);
-                        }
-                        m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
-                            [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
-                    }
-                    else if(letterExists == 3)
-                    {
-                        auto it = m_LetterToLineMap.find(letter[0]);
-                        if (it != m_LetterToLineMap.end())
-                        {
-                            m_WordChars.push_back(letter[0]);
-                            m_WordChars.push_back(letter[0]); 
-                            m_WordChars.push_back(letter[0]); 
-                            m_LetterToLineMap.erase(it);
-                            auto it2 = m_LetterToLineMap.find(letter[0]);
-                            if (it2 != m_LetterToLineMap.end()) m_LetterToLineMap.erase(it2);
-                            auto it3 = m_LetterToLineMap.find(letter[0]);
-                            if (it3 != m_LetterToLineMap.end()) m_LetterToLineMap.erase(it3);
-                        }
-                        m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
-                            [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
-                    }
-                    
-                    if(letterExists == 0)
-                    {
-                        m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
-                            [&](Button* b) { return b->GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
-                        m_WrongGuesses++;
-                    }
+                    continue;
                 }
+                std::string letter  = button.GetButtonText();
+                int letterExists    = doesLetterExist(letter[0]);
+                if(letterExists == 0)
+                {
+                    m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
+                        [&](Button b) { return b.GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
+                    m_WrongGuesses++;
+                    continue;
+                }
+
+                if(letterExists == 1)
+                { 
+                    auto it = m_LetterToLineMap.find(letter[0]);
+                    if (it != m_LetterToLineMap.end())
+                    {
+                        m_WordChars.push_back(letter[0]);
+                        m_LetterToLineMap.erase(it);
+                    }
+                    m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
+                        [&](Button b) { return b.GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
+                }
+                else if(letterExists == 2)
+                {
+                    auto it = m_LetterToLineMap.find(letter[0]);
+                    if (it != m_LetterToLineMap.end())
+                    {
+                        m_WordChars.push_back(letter[0]);
+                        m_WordChars.push_back(letter[0]);
+                        m_LetterToLineMap.erase(it);
+                        auto it2 = m_LetterToLineMap.find(letter[0]);
+                        if (it2 != m_LetterToLineMap.end()) m_LetterToLineMap.erase(it2);
+                    }
+                    m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
+                        [&](Button b) { return b.GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
+                }
+                else if(letterExists == 3)
+                {
+                    auto it = m_LetterToLineMap.find(letter[0]);
+                    if (it != m_LetterToLineMap.end())
+                    {
+                        m_WordChars.push_back(letter[0]);
+                        m_WordChars.push_back(letter[0]); 
+                        m_WordChars.push_back(letter[0]); 
+                        m_LetterToLineMap.erase(it);
+                        auto it2 = m_LetterToLineMap.find(letter[0]);
+                        if (it2 != m_LetterToLineMap.end()) m_LetterToLineMap.erase(it2);
+                        auto it3 = m_LetterToLineMap.find(letter[0]);
+                        if (it3 != m_LetterToLineMap.end()) m_LetterToLineMap.erase(it3);
+                    }
+                    m_LettersButtons.erase(std::remove_if(m_LettersButtons.begin(), m_LettersButtons.end(), 
+                        [&](Button b) { return b.GetButtonText()[0] == letter[0]; }), m_LettersButtons.end());
+                }
+            
             }
         }
         else
@@ -131,11 +148,14 @@ namespace isaac_hangman
             if(m_NextWordButton->isPressed())
             {
                 // Get Next Word
-                m_Word = Subject::GetRandomWord(m_CurrentSubject);
-                m_Lose = false;
-                m_SpaceRemoved = false;
-                
+                m_Word          = GetRandomWord(m_CurrentSubject);
+                m_WrongGuesses  = 0;
+                m_Lose          = false;
+                m_SpaceRemoved  = false;
+                m_WordChars.clear();
+                FillLetterBank();
                 SetStickman();
+                std::cout << "\n\tWord: " << m_Word << '\n';
             }
 
 
@@ -150,18 +170,18 @@ namespace isaac_hangman
         {
             if(m_WordChars.size() == m_Word.length())
             {
-                m_Lose = false;
-                m_SpaceRemoved = false;
-                m_Word = Subject::GetRandomWord(m_CurrentSubject);
+                m_Lose          = false;
+                m_SpaceRemoved  = false;
+                m_Word          = GetRandomWord(m_CurrentSubject);
                 m_WordChars.clear();
                 m_LettersButtons.clear();
                 FillLetterBank();
                 m_WrongGuesses = 0;
             }
             
-            for (auto button : m_LettersButtons)
+            for (auto& button : m_LettersButtons)
             {
-                button->Update(deltaTime);
+                button.Update(deltaTime);
             }
 
         }
@@ -174,8 +194,8 @@ namespace isaac_hangman
 
     void PlayState::Render()
     {
-        auto subject = Subject::SubjectToString(m_CurrentSubject);
-        auto str = "Subject: " + *subject;
+        auto subject    = SubjectToString(m_CurrentSubject);
+        auto str        = "Subject: " + subject;
         m_WordRenderer->RenderText(25, 25, COLOR_LIGHTORANGE, str);
         m_QuitButton->Render();
         if(m_Lose == false)
@@ -190,16 +210,16 @@ namespace isaac_hangman
                     for(auto& line : it->second)
                     {
                         if(letter == 'I')
-                            m_WordRenderer->RenderText(line.x+20, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
+                            m_WordRenderer->RenderText(line.x, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
                         else
                             m_WordRenderer->RenderText(line.x, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
                     }
                 }
             }
             
-            for (Button* button : m_LettersButtons)
+            for (auto& button : m_LettersButtons)
             {
-                button->Render();
+                button.Render();
             }
         }
         else
@@ -212,43 +232,43 @@ namespace isaac_hangman
 
         for(auto& part : m_PoleParts)
         {
-            m_PartsRenderer->RenderText(part.second.x, part.second.y, COLOR_LIGHTORANGE, std::string(1, part.first));
+            m_StickmanRenderer->RenderText(part.second.x, part.second.y, COLOR_LIGHTORANGE, std::string(1, part.first));
         }
 
         switch (m_WrongGuesses)
         {
         case 1:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
             break;
         case 2:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
             break;
         case 3:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
             break;
         case 4:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
             break;
         case 5:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
             break;
         case 6:
-            m_PartsRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
-            m_PartsRenderer->RenderText(m_StickmanParts[5].second.x, m_StickmanParts[5].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[5].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
+            m_StickmanRenderer->RenderText(m_StickmanParts[5].second.x, m_StickmanParts[5].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[5].first));
             m_Lose = true;
             break;
         default:
@@ -257,29 +277,37 @@ namespace isaac_hangman
         
     }
 
-    // OPTIMIZE: Creating 26 button and emplacing them / inserting into an unordered map 
+    // OPTIMIZE: Creating 26 button and emplacing them / inserting into an unordered map/vector 
     // takes about 0.25 seconds, slow.  
     void PlayState::FillLetterBank()
     {
         int buttonWidth = 30;
-        float x = 200.f;
-        float y = SCREEN_HEIGHT - 200.f;
-        float margin = 0.f;
-        int cnt = 0;
-        
+        float x         = 200.f;
+        float y         = SCREEN_HEIGHT - 200.f;
+        int cnt         = 0;
+
+        m_LettersButtons.clear();
         for (char l = 'A'; l <= 'Z'; ++l) 
         {
-            auto btn = new Button(&l, 40, glm::vec2(0, 0));
-            m_LettersButtons.emplace_back(btn);
-            
             if(cnt == 13)
             {
                 x = 200.f;
                 y += buttonWidth + 20.f;
             }
-            m_LettersButtons.at(cnt)->SetPosition(glm::vec2(x, y));
-            x += margin + buttonWidth;
-            cnt++;   
+            m_LettersButtons.emplace_back(&l, 40, glm::vec2(x, y));
+            x += buttonWidth;
+            cnt++;
+
+            /*
+            if(cnt == 13)
+            {
+                x = 200.f;
+                y += buttonWidth + 20.f;
+            }
+            m_LettersButtons.at(cnt).SetPosition(glm::vec2(x, y));
+            x += buttonWidth;
+            cnt++;
+            */
         }
     }
 
@@ -299,11 +327,12 @@ namespace isaac_hangman
     void PlayState::RenderLinePerLetter()
     {
         // Render lines for each letter in m_Word
-        int wordLength = m_Word.length();             
-        int startX = SCREEN_WIDTH / 3 + 50;
-        int startY = SCREEN_HEIGHT / 2 - 100;
-        int margin = 30;
-        int spaceCnt = 0;
+        int wordLength  = m_Word.length();             
+        int startX      = SCREEN_WIDTH / 3 + 50;
+        int startY      = SCREEN_HEIGHT / 2 - 100;
+        int margin      = 30;
+        int spaceCnt    = 0;
+
         for (int i = 0; i < wordLength; i++)
         {
             auto it = m_LetterToLineMap.find(m_Word[i]);

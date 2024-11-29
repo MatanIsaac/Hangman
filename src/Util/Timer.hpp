@@ -66,9 +66,9 @@ namespace isaac_hangman
         */
         void Start()
         {
-            mStarted = true;
-            mPaused = false;
-            mStartTime = std::chrono::steady_clock::now();
+            mStarted    = true;
+            mPaused     = false;
+            mStartTime  = std::chrono::steady_clock::now();
         }
 
         /**
@@ -78,10 +78,10 @@ namespace isaac_hangman
         */
         float Stop()
         {
-            mStarted = false;
-            mPaused = false;
-            mEndTime = std::chrono::steady_clock::now();
-            mDuration = mEndTime - mStartTime;
+            mStarted    = false;
+            mPaused     = false;
+            mEndTime    = std::chrono::steady_clock::now();
+            mDuration   = mEndTime - mStartTime;
             return mDuration.count();
         }
 
@@ -93,9 +93,9 @@ namespace isaac_hangman
         {
             if (mStarted)
             {
-                mStarted = false;
-                mPaused = true;
-                mPauseTime = mStartTime;
+                mStarted    = false;
+                mPaused     = true;
+                mPauseTime  = mStartTime;
                 Stop();
             }
         }
@@ -108,8 +108,8 @@ namespace isaac_hangman
         {
             if (mPaused)
             {
-                mStarted = true;
-                mPaused = false;
+                mStarted    = true;
+                mPaused     = false;
                 StartAtTime(mPauseTime);
             }
         }
@@ -128,7 +128,7 @@ namespace isaac_hangman
                     return mDuration.count();
                 }
                 SteadyTimePoint now = std::chrono::steady_clock::now();
-                mDuration = now - mStartTime;
+                mDuration           = now - mStartTime;
                 return mDuration.count();
             }
             return 0.0f; // Timer is not started.
@@ -148,7 +148,7 @@ namespace isaac_hangman
                     return std::chrono::duration_cast<std::chrono::milliseconds>(mDuration).count();
                 }
                 SteadyTimePoint now = std::chrono::steady_clock::now();
-                mDuration = now - mStartTime;
+                mDuration           = now - mStartTime;
                 return std::chrono::duration_cast<std::chrono::milliseconds>(mDuration).count();
             }
             return 0;
@@ -206,9 +206,9 @@ namespace isaac_hangman
         */
         void StartAtTime(const SteadyTimePoint& timepoint)
         {
-            mStarted = true;
-            mPaused = false;
-            mStartTime = timepoint;
+            mStarted    = true;
+            mPaused     = false;
+            mStartTime  = timepoint;
         }
 
     private:

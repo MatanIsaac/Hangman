@@ -18,10 +18,17 @@ namespace isaac_hangman
 		BUTTON_TOTAL
 	};
 
+	using UniqueButton = std::unique_ptr<class Button>;
+
 	class Button
 	{
 	public:
 		Button(const char *buttonText, uint8_t textSize, const glm::vec2 &position);
+		~Button() = default;
+		Button(const Button& btn);
+		Button(Button&& other) noexcept;
+		Button& operator=(const Button& other);
+		Button& operator=(Button&& other) noexcept;
 
 		void ProcessInput();
 		void Update(float deltaTime);
@@ -39,27 +46,21 @@ namespace isaac_hangman
 		void ApplySineAnimation(float deltaTime, float frequency, float amplitude, float phaseOffset);
 	private:
 		bool isButtonDown() const { return m_IsButtonDown; }
-		bool isMouseButtonPressed(Uint32 button) const;
-		bool isMouseButtonReleased(Uint32 button) const;
 
 		void ResetButton() { m_IsButtonDown = false; }
 		void SetButtonLock(bool lock) {  m_ButtonLocked = lock; }	
 
 		const glm::vec2& GetOriginalPosition() const { return m_OriginalPosition; } /* used for sine animations */
 
-	private:
-		bool m_IsButtonDown = false;
-		bool m_ButtonLocked = false;
-
-		std::unique_ptr<TextRenderer> m_TextRenderer;
-
-		std::string m_ButtonText;
-		uint8_t m_ButtonSize;
-		glm::vec2 m_Position;
-		glm::vec2 m_OriginalPosition;
-
-		ButtonAction m_ButtonAction;
-
-		float m_ElapsedTime = 0.0f;
+	private: 
+        UniqueTextRenderer 	m_TextRenderer;
+        ButtonAction 		m_ButtonAction; 		
+        std::string 		m_ButtonText;
+        uint8_t 			m_ButtonSize; 	
+        glm::vec2 			m_Position; 			
+        glm::vec2 			m_OriginalPosition; 	
+        float 				m_ElapsedTime; 		
+        bool 				m_IsButtonDown; 		
+        bool 				m_ButtonLocked; 		
 	};
 }

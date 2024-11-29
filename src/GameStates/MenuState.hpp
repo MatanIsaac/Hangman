@@ -21,10 +21,9 @@ namespace isaac_hangman
 		void Render() override;
 
 	private:
-		GameStateManager& m_GameStateManager;
-		
-		std::unique_ptr<Button> m_PlayButton;	
-		std::unique_ptr<Button> m_QuitButton;	
-		std::unique_ptr<TextRenderer> m_TextRenderer;
+		GameStateManager& 	m_GameStateManager;
+		UniqueButton 		m_PlayButton;	
+		UniqueButton 		m_QuitButton;	
+		UniqueTextRenderer 	m_TextRenderer;
 	};
 }

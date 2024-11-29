@@ -19,7 +19,7 @@ namespace isaac_hangman
 	class PlayState : public IGameState
 	{
 	public:
-		PlayState(GameStateManager& stateManager,const std::string& randomWord, Subject::Subjects subject);
+		PlayState(GameStateManager& stateManager,const std::string& randomWord, Subjects subject);
 		~PlayState() override {};
 		
 		void ProcessInput() override;
@@ -33,25 +33,24 @@ namespace isaac_hangman
 		void RenderLinePerLetter();
 		void SetStickman();
 	private:
-		GameStateManager& m_GameStateManager;
-		std::string m_Word;
-		bool m_Lose;
-		bool m_SpaceRemoved;
-		int m_WrongGuesses;
-		const int MAX_WRONG_GUESSES = 6;
-		std::vector<Button*> m_LettersButtons;
-		// Using 2 text renderers to render the word and the stickman parts 
-		// For renderer with different font sizes
-		std::unique_ptr<TextRenderer> m_WordRenderer;
-		std::unique_ptr<TextRenderer> m_PartsRenderer;
+		GameStateManager& 	m_GameStateManager;
+		std::string 		m_Word;
+		Subjects 			m_CurrentSubject;
+		const int 			MAX_WRONG_GUESSES = 6;
+		Timer 				m_Timer;
+		bool				m_Lose;
+		bool 				m_SpaceRemoved;
+		int 				m_WrongGuesses;
+		UniqueTextRenderer 	m_WordRenderer;
+		UniqueTextRenderer 	m_StickmanRenderer;
+		UniqueButton 		m_NextWordButton;
+		UniqueButton 		m_BackToSubjectsButton;
+		UniqueButton 		m_QuitButton;
+		std::vector<Button> m_LettersButtons;
+		std::vector<char> 	m_WordChars; 
+
 		std::unordered_map<char, std::vector<glm::ivec2>> m_LetterToLineMap;
-		std::vector<char> m_WordChars; 
 		std::vector<std::pair<char, glm::ivec2>> m_StickmanParts;
 		std::vector<std::pair<char, glm::ivec2>> m_PoleParts;
-		std::unique_ptr<Button> m_NextWordButton;
-		std::unique_ptr<Button> m_BackToSubjectsButton;
-		std::unique_ptr<Button> m_QuitButton;
-		Subject::Subjects m_CurrentSubject;
-		Timer m_Timer;
 	};
 }

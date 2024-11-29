@@ -6,21 +6,96 @@
 namespace isaac_hangman
 {
 	Button::Button(const char *buttonText, uint8_t textSize, const glm::vec2 &position)
-		: m_IsButtonDown(false),
-		m_ButtonLocked(false),
+		: m_TextRenderer(std::make_unique<TextRenderer>(35)),
+		m_ButtonAction(ButtonAction::BUTTON_OUT),
 		m_ButtonText(buttonText),
 		m_ButtonSize(textSize),
 		m_Position(position),
 		m_OriginalPosition(position),
-		m_ElapsedTime(0.f)
+		m_ElapsedTime(0.0f),
+		m_IsButtonDown(false),
+		m_ButtonLocked(false)
 	{
-
-		m_TextRenderer = std::make_unique<TextRenderer>(35);
-
-		m_ButtonAction = ButtonAction::BUTTON_OUT;
 	}
 
-	void Button::ProcessInput()
+	Button::Button(const Button& btn)
+	{
+		m_TextRenderer 		= btn.m_TextRenderer->Clone();
+		m_ButtonAction		= btn.m_ButtonAction;
+		m_ButtonText		= btn.m_ButtonText;
+		m_ButtonSize		= btn.m_ButtonSize;
+		m_Position			= btn.m_Position;
+		m_OriginalPosition	= btn.m_OriginalPosition;
+		m_IsButtonDown 		= btn.m_IsButtonDown;
+		m_ButtonLocked 		= btn.m_ButtonLocked;
+
+	}
+
+	// Move Constructor
+	Button::Button(Button&& other) noexcept
+		: m_TextRenderer(std::move(other.m_TextRenderer)), // Transfer ownership
+		m_ButtonAction(other.m_ButtonAction),
+		m_ButtonText(std::move(other.m_ButtonText)), // Move string
+		m_ButtonSize(other.m_ButtonSize),
+		m_Position(std::move(other.m_Position)),
+		m_OriginalPosition(std::move(other.m_OriginalPosition)),
+		m_ElapsedTime(other.m_ElapsedTime),
+		m_IsButtonDown(other.m_IsButtonDown),
+		m_ButtonLocked(other.m_ButtonLocked)
+	{
+		// Nothing else to do, as moved-from resources are now owned here
+	}
+
+	// Move Assignment Operator
+	Button& Button::operator=(Button&& other) noexcept
+	{
+		if (this != &other) // Check for self-assignment
+		{
+			// Transfer ownership of unique_ptr
+			m_TextRenderer = std::move(other.m_TextRenderer);
+
+			// Move other members
+			m_ButtonAction 		= other.m_ButtonAction;
+			m_ButtonText 		= std::move(other.m_ButtonText);
+			m_ButtonSize 		= other.m_ButtonSize;
+			m_Position 			= std::move(other.m_Position);
+			m_OriginalPosition 	= std::move(other.m_OriginalPosition);
+			m_ElapsedTime 		= other.m_ElapsedTime;
+			m_IsButtonDown 		= other.m_IsButtonDown;
+			m_ButtonLocked 		= other.m_ButtonLocked;
+		}
+		return *this;
+	}
+
+    Button& Button::operator=(const Button& other)
+	{
+		if (this != &other) // Check for self-assignment
+		{
+			// Copy non-pointer members
+			m_ButtonAction 		= other.m_ButtonAction;
+			m_ButtonText 		= other.m_ButtonText;
+			m_ButtonSize 		= other.m_ButtonSize;
+			m_Position 			= other.m_Position;
+			m_OriginalPosition 	= other.m_OriginalPosition;
+			m_ElapsedTime 		= other.m_ElapsedTime;
+			m_IsButtonDown 		= other.m_IsButtonDown;
+			m_ButtonLocked 		= other.m_ButtonLocked;
+
+			// Use the Clone method for TextRenderer
+			if (other.m_TextRenderer)
+			{
+				m_TextRenderer = other.m_TextRenderer->Clone();
+			}
+			else
+			{
+				m_TextRenderer.reset();
+			}
+		}
+		return *this;
+	}
+
+
+    void Button::ProcessInput()
 	{
 		
 	}
@@ -28,21 +103,20 @@ namespace isaac_hangman
 	void Button::Update(float deltaTime)
 	{
 		int mouseX, mouseY;
-		SDL_GetMouseState(&mouseX, &mouseY);
-		
+		Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY); 
+
 		if (!m_TextRenderer)
 		{
 			std::cout << "ERROR in Button class proccess input" << '\n';
 			return;
 		}
 
-		const auto &buttonSize = m_TextRenderer->GetScale();
+		const auto &buttonSize 	= m_TextRenderer->GetScale();
 
-		bool isMouseHovering = (mouseX >= m_Position.x && mouseX <= (m_Position.x + buttonSize.x)) &&
+		bool isMouseHovering 	= (mouseX >= m_Position.x && mouseX <= (m_Position.x + buttonSize.x)) &&
 								(mouseY >= m_Position.y && mouseY <= (m_Position.y + buttonSize.y));
 
-		bool isLeftMousePressed = isMouseButtonPressed(SDL_BUTTON_LEFT);
-		//bool isLeftMouseReleased = isMouseButtonReleased(SDL_BUTTON_LEFT);
+		bool isLeftMousePressed = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
 
 		if (isMouseHovering)
 		{
@@ -110,23 +184,8 @@ namespace isaac_hangman
 		return false;
 	}
 
-	bool Button::isMouseButtonPressed(Uint32 button) const
-	{
-		int x, y;
-		Uint32 mouseState = SDL_GetMouseState(&x, &y);
-		return (mouseState & SDL_BUTTON(button)) != 0;
-	}
 
-	bool Button::isMouseButtonReleased(Uint32 button) const
-	{
-		return isMouseButtonPressed(button) == false;
-	}
-
-
-	void Button::ApplySineAnimation(float deltaTime,
-									float frequency,
-									float amplitude,
-									float phaseOffset)
+	void Button::ApplySineAnimation(float deltaTime, float frequency, float amplitude, float phaseOffset)
 	{
 		m_ElapsedTime += deltaTime;
 
@@ -134,7 +193,7 @@ namespace isaac_hangman
 		float easedSineWave = (1 - cos((m_ElapsedTime * frequency) + phaseOffset)) / 2 * amplitude;
 
 		glm::vec2 buttonPos = GetOriginalPosition();
-		buttonPos.y += easedSineWave;
+		buttonPos.y 		+= easedSineWave;
 		SetPosition(buttonPos);
 	}
 

@@ -8,8 +8,8 @@
 
 namespace isaac_hangman
 {
-    using UniqueRenderer = std::unique_ptr<SDL_Renderer,std::function<void(SDL_Renderer *)>>;
-    using UniqueWindow = std::unique_ptr<SDL_Window, std::function<void(SDL_Window *)>>;
+    using UniqueRenderer    = std::unique_ptr<SDL_Renderer,std::function<void(SDL_Renderer *)>>;
+    using UniqueWindow      = std::unique_ptr<SDL_Window, std::function<void(SDL_Window *)>>;
 
     class GameContext
     {
@@ -20,9 +20,9 @@ namespace isaac_hangman
         GameContext(GameContext&&) = delete;
         GameContext& operator=(GameContext&&) = delete;
 
-        UniqueWindow m_Window;
-        UniqueRenderer m_Renderer;
-        bool m_IsRunning = false;
+        UniqueWindow    m_Window;
+        UniqueRenderer  m_Renderer;
+        bool            m_IsRunning = false;
 
         // Access the single instance of GameContext
         static GameContext& GetInstance()
@@ -36,7 +36,7 @@ namespace isaac_hangman
         {
             if (SDL_Init(SDL_INIT_VIDEO) < 0)
             {
-                std::cerr << "SDL_Init Error: " << SDL_GetError() << '\n';
+                SDL_Log("SDL_Init Error: %s", SDL_GetError());
                 return false;
             }
 
@@ -47,7 +47,7 @@ namespace isaac_hangman
             );
             if (m_Window == nullptr)
             {
-                std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+                SDL_Log("SDL_CreateWindow Error: %s", SDL_GetError());
                 SDL_Quit();
                 return false;
             }
@@ -59,7 +59,7 @@ namespace isaac_hangman
             );
             if (m_Renderer == nullptr)
             {
-                std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+                SDL_Log("SDL_CreateRenderer Error: %s", SDL_GetError());
                 SDL_DestroyWindow(m_Window.get());
                 SDL_Quit();
                 return false;
