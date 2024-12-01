@@ -23,7 +23,7 @@ namespace isaac_hangman
 	class Button
 	{
 	public:
-		Button(const char *buttonText, uint8_t textSize, const glm::vec2 &position);
+		Button(const char *buttonText, const glm::vec2 &position);
 		~Button() = default;
 		Button(const Button& btn);
 		Button(Button&& other) noexcept;
@@ -37,8 +37,8 @@ namespace isaac_hangman
 		bool isPressed();
 		
 		bool GetButtonLocked() const { return m_ButtonLocked; }	
-		uint8_t GetButtonSize() const { return m_ButtonSize; }
 		const char* GetButtonText() const { return m_ButtonText.c_str(); }
+		const glm::vec2& GetButtonSize() const { return m_ButtonSize; }
 		const glm::vec2& GetPosition() const { return m_Position; }
 		
 		void SetPosition(const glm::vec2& newPosition);
@@ -53,10 +53,9 @@ namespace isaac_hangman
 		const glm::vec2& GetOriginalPosition() const { return m_OriginalPosition; } /* used for sine animations */
 
 	private: 
-        UniqueTextRenderer 	m_TextRenderer;
         ButtonAction 		m_ButtonAction; 		
-        std::string 		m_ButtonText;
-        uint8_t 			m_ButtonSize; 	
+        std::string 		m_ButtonText; 	
+		glm::vec2 			m_ButtonSize;
         glm::vec2 			m_Position; 			
         glm::vec2 			m_OriginalPosition; 	
         float 				m_ElapsedTime; 		

@@ -11,7 +11,6 @@
 
 namespace isaac_hangman
 {
-
     PlayState::PlayState(GameStateManager& stateManager,const std::string& randomWord, Subjects subject)
         : 
         m_GameStateManager(stateManager),
@@ -21,23 +20,21 @@ namespace isaac_hangman
         m_Score(0),
         m_Won(false),
         m_Lost(false),
-        m_SpaceRemoved(false),
-        m_WordRenderer(std::make_unique<TextRenderer>(35)),
-        m_StickmanRenderer(std::make_unique<TextRenderer>(90))
+        m_SpaceRemoved(false)
     {
         m_CurrentSubjectName    = "Subject: " + SubjectToString(m_ECurrentSubject);
 
         glm::vec2 nextWordButtonPosition( glm::vec2( SCREEN_WIDTH - 180.f, SCREEN_HEIGHT - 85 )  );
-        m_NextWordButton = std::make_unique<Button>("Next Word",36,nextWordButtonPosition);
+        m_NextWordButton = std::make_unique<Button>("Next Word",nextWordButtonPosition);
 
         glm::vec2 BackButtonPosition( glm::vec2( SCREEN_WIDTH/3.f, SCREEN_HEIGHT - 85.f )  );
-        m_BackToSubjectsButton = std::make_unique<Button>("Back To Subjects", 36, BackButtonPosition);
+        m_BackToSubjectsButton = std::make_unique<Button>("Back To Subjects", BackButtonPosition);
 
         glm::vec2 quitButtonPosition( glm::vec2( 35.f, SCREEN_HEIGHT - 85.f ) );
-        m_QuitButton = std::make_unique<Button>("Quit", 36, quitButtonPosition); 
+        m_QuitButton = std::make_unique<Button>("Quit", quitButtonPosition); 
 
         FillLetterBank(); 
-        SetStickman();
+       
     }
 
     void PlayState::ProcessInput()
@@ -49,7 +46,8 @@ namespace isaac_hangman
 
         if(m_BackToSubjectsButton->isPressed())
         {
-            m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager));
+            m_GameStateManager.PopState();
+            //m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager));
         }
         
         if(!m_Lost && !m_Won)
@@ -67,6 +65,9 @@ namespace isaac_hangman
         {
             if(m_NextWordButton->isPressed())
             {
+                if(m_Lost)
+                    m_Score = 0;
+
                 ResetGame();
             }
         }    
@@ -94,36 +95,47 @@ namespace isaac_hangman
 
     void PlayState::Render()
     {        
-        m_WordRenderer->RenderText(25, 25, COLOR_LIGHTORANGE, m_CurrentSubjectName);
+        auto& textRenderer = TextRenderer::GetInstance();
+        
+        // Render the current subject
+        textRenderer.RenderText(25, 25, COLOR_LIGHTORANGE, m_CurrentSubjectName);
+        
+        // Render the score at the top-right corner
+        std::string scoreText = "Score: " + std::to_string(m_Score);
+        textRenderer.RenderText(SCREEN_WIDTH - 200, 25, COLOR_LIGHTORANGE, scoreText);
+        
+        // Render the hangman parts
         RenderHangman();
+        
+        // Render the lines for letters
         RenderLinePerLetter();
+        
+        // Render the correct letters
         RenderCorrectLetters();
+        
+        // Render buttons
         m_QuitButton->Render();
         m_BackToSubjectsButton->Render();
 
-        if(!m_Lost && !m_Won)
+        if (!m_Lost && !m_Won)
         {
             for (auto& button : m_LettersButtons)
             {
                 button.Render();
             }
         }
-
-        if(m_Lost || m_Won)
+        else
         {
             m_NextWordButton->Render();
+
             auto str = (m_Won && !m_Lost) ? "You Won!" : "You Lost!";
-            m_WordRenderer->RenderText(SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 - 100,COLOR_LIGHTORANGE, str);
-            m_WordRenderer->RenderText(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 ,COLOR_LIGHTORANGE, "Would You Like To Play Again?");
+            textRenderer.RenderText(SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 - 100, COLOR_LIGHTORANGE, str);
+            textRenderer.RenderText(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, COLOR_LIGHTORANGE, "Would You Like To Play Again?");
         }
     }
 
-    // OPTIMIZE: Creating 26 button and emplacing them / inserting into an unordered map/vector 
-    // takes about 0.25 seconds on average, slow.  
     void PlayState::FillLetterBank()
     {
-        m_Timer.Start();
-        
         int buttonWidth = 30;
         float x         = 200.f;
         float y         = SCREEN_HEIGHT - 200.f;
@@ -137,13 +149,10 @@ namespace isaac_hangman
                 x = 200.f;
                 y += buttonWidth + 20.f;
             }
-            m_LettersButtons.emplace_back(&l, 40, glm::vec2(x, y));
+            m_LettersButtons.emplace_back(&l, glm::vec2(x, y));
             x += buttonWidth;
             cnt++;
         }
-
-        auto time = m_Timer.Stop();
-        std::cout << "Took: " << time << " Seconds\n";
     }
 
     int PlayState::doesLetterExist(char letter) const
@@ -167,13 +176,14 @@ namespace isaac_hangman
         int startY      = SCREEN_HEIGHT / 2 - 100;
         int margin      = 30;
         int spaceCnt    = 0;
+        auto& textRenderer = TextRenderer::GetInstance();
 
         for (int i = 0; i < wordLength; i++)
         {
             auto it = m_LetterToLineMap.find(m_Word[i]);
             if (m_Word[i] == ' ')   // If the letter is a space, render a space
             {
-                m_WordRenderer->RenderText(startX + 5, startY - 60, COLOR_LIGHTORANGE, " ");
+                textRenderer.RenderText(startX + 5, startY - 60, COLOR_LIGHTORANGE, " ");
                 startX += margin;
                 spaceCnt++;
                 if(spaceCnt == 2)
@@ -188,54 +198,9 @@ namespace isaac_hangman
             else
                 it->second.push_back(glm::ivec2(startX + 5, startY));
             
-            m_WordRenderer->RenderText(startX + 5, startY - 60, COLOR_LIGHTORANGE, "_");
+            textRenderer.RenderText(startX + 5, startY - 60, COLOR_LIGHTORANGE, "_");
             startX += margin;
         }
-    }
-
-    void PlayState::SetStickman()
-    {
-        m_PoleParts.clear();
-
-        int startX = 10;
-        int startY = 100;
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+200)));   
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+175)));   
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+160)));   
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+145)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+130)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+115)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+100)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+75)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+60)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+45)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+30)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY+15)));    
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+20, startY)));    
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+20, startY- 70)));    
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+35, startY- 70)));    
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+50, startY- 70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+65, startY- 70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+80, startY- 70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+95, startY- 70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+110, startY-70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+125, startY-70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+140, startY-70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+155, startY-70)));   
-        m_PoleParts.push_back(std::make_pair('_', glm::ivec2(startX+170, startY-70)));   
-        m_PoleParts.push_back(std::make_pair('|', glm::ivec2(startX+205, startY)));   
-
-        startX = 190;
-        startY = 180;
-
-        m_StickmanParts.clear();
-        
-        m_StickmanParts.push_back(std::make_pair('O', glm::ivec2( startX,      startY - 30 )));    // head
-        m_StickmanParts.push_back(std::make_pair('|', glm::ivec2( startX + 25, startY + 40 )));    // body
-        m_StickmanParts.push_back(std::make_pair('/', glm::ivec2( startX - 15, startY + 40 )));    // left arm
-        m_StickmanParts.push_back(std::make_pair('\\', glm::ivec2(startX + 35, startY + 40 )));   // right arm
-        m_StickmanParts.push_back(std::make_pair('/', glm::ivec2( startX - 15, startY + 100)));    // left leg
-        m_StickmanParts.push_back(std::make_pair('\\', glm::ivec2(startX + 35, startY + 100)));   // right leg
     }
 
     void PlayState::ResetGame()
@@ -248,7 +213,6 @@ namespace isaac_hangman
         m_SpaceRemoved  = false;
         m_CorrectLetters.clear();
         FillLetterBank();
-        SetStickman();
         std::cout << "\n\tWord: " << m_Word << '\n';
     }
 
@@ -293,7 +257,6 @@ namespace isaac_hangman
             {
                 m_Score++;
                 m_Won = true;
-                std::cout << "YES WON WOHOOOOO\n";
                 break; // Exit early as the word is complete
             }
         }
@@ -302,54 +265,56 @@ namespace isaac_hangman
 
     void PlayState::RenderHangman()
     {
-        for(auto& part : m_PoleParts)
+        auto& context = GameContext::GetInstance();
+
+        SDL_SetRenderDrawColor(context.GetRenderer().get(), COLOR_LIGHTORANGE.r, COLOR_LIGHTORANGE.g, COLOR_LIGHTORANGE.b, COLOR_LIGHTORANGE.a);
+
+        // Base Parts
+        SDL_RenderDrawLine(context.GetRenderer().get(), 50,  320, 150, 320); // Base horizontal line
+        SDL_RenderDrawLine(context.GetRenderer().get(), 100, 320, 100, 80);  // Vertical pole
+        SDL_RenderDrawLine(context.GetRenderer().get(), 100, 80, 200, 80);   // Top horizontal bar
+        SDL_RenderDrawLine(context.GetRenderer().get(), 200, 80, 200, 110);  // Rope
+
+        if (m_WrongGuesses >= 1) // Head
         {
-            m_StickmanRenderer->RenderText(part.second.x, part.second.y, COLOR_LIGHTORANGE, std::string(1, part.first));
+            SDL_Rect head = { 183, 110, 34, 34 }; // Adjusted for proportions and centering
+            SDL_RenderDrawRect(context.GetRenderer().get(), &head);
         }
 
-        switch (m_WrongGuesses)
+        if (m_WrongGuesses >= 2) // Body
         {
-        case 1:
-            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            break;
-        case 2:
-            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            break;
-        case 3:
-            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            break;
-        case 4:
-            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            break;
-        case 5:
-            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
-            break;
-        case 6:
-            m_StickmanRenderer->RenderText(m_StickmanParts[0].second.x, m_StickmanParts[0].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[0].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[1].second.x, m_StickmanParts[1].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[1].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[2].second.x, m_StickmanParts[2].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[2].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[3].second.x, m_StickmanParts[3].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[3].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[4].second.x, m_StickmanParts[4].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[4].first));
-            m_StickmanRenderer->RenderText(m_StickmanParts[5].second.x, m_StickmanParts[5].second.y, COLOR_LIGHTORANGE, std::string(1, m_StickmanParts[5].first));
-            m_Lost = true;
-            break;
-        default:
-            break;
+            SDL_RenderDrawLine(context.GetRenderer().get(), 200, 144, 200, 220); // Body length adjusted
         }
+
+        if (m_WrongGuesses >= 3) // Left arm
+        {
+            SDL_RenderDrawLine(context.GetRenderer().get(), 200, 160, 170, 190); // Slanted left arm
+        }
+
+        if (m_WrongGuesses >= 4) // Right arm
+        {
+            SDL_RenderDrawLine(context.GetRenderer().get(), 200, 160, 230, 190); // Slanted right arm
+        }
+
+        if (m_WrongGuesses >= 5) // Left leg
+        {
+            SDL_RenderDrawLine(context.GetRenderer().get(), 200, 220, 180, 270); // Slanted left leg
+        }
+
+        if (m_WrongGuesses >= 6) // Right leg
+        {
+            SDL_RenderDrawLine(context.GetRenderer().get(), 200, 220, 220, 270); // Slanted right leg
+
+            // Mark game as lost
+            m_Lost = true;
+        }
+
     }
 
     void PlayState::RenderCorrectLetters()
     {
+        auto& textRenderer = TextRenderer::GetInstance();
+        
         for(auto& letter : m_CorrectLetters)
         {
             auto it = m_LetterToLineMap.find(letter);
@@ -358,9 +323,9 @@ namespace isaac_hangman
                 for(auto& line : it->second)
                 {
                     if(letter == 'I')
-                        m_WordRenderer->RenderText(line.x+6, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
+                        textRenderer.RenderText(line.x+6, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
                     else
-                        m_WordRenderer->RenderText(line.x, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
+                        textRenderer.RenderText(line.x, line.y - 80, COLOR_LIGHTORANGE, std::string(1, letter));
                 }
             }
         }

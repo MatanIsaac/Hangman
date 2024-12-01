@@ -12,15 +12,13 @@ namespace isaac_hangman
 		m_CurrentSubject = Subjects::NONE;
 
 		glm::vec2 backButtonPosition( glm::vec2( 35.f, SCREEN_HEIGHT - 85.f ) );
-		m_BackToMenuButton = std::make_unique<Button>("Back To Main Menu", 24,backButtonPosition);
+		m_BackToMenuButton = std::make_unique<Button>("Back To Main Menu", backButtonPosition);
 
 		glm::vec2 foodButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f, ( SCREEN_HEIGHT / 3.f ) ) );
-		m_SubjectFoodButton = std::make_unique<Button>("FOOD", 36, foodButtonPosition);
+		m_SubjectFoodButton = std::make_unique<Button>("Food", foodButtonPosition);
 
 		glm::vec2 countriesButtonPosition( glm::vec2( SCREEN_WIDTH / 3.f + 100, ( SCREEN_HEIGHT / 3.f ) ) );
-		m_SubjectCountriesButton = std::make_unique<Button>("COUNTRIES", 36, countriesButtonPosition);
-
-		m_TextRenderer = std::make_unique<TextRenderer>(40);
+		m_SubjectCountriesButton = std::make_unique<Button>("Countries", countriesButtonPosition);
 	}
 
 	void SubjectMenuState::ProcessInput()
@@ -59,12 +57,8 @@ namespace isaac_hangman
 		m_BackToMenuButton->Render();
 		m_SubjectFoodButton->Render();
 		m_SubjectCountriesButton->Render();
-		m_TextRenderer->RenderText
-		(
-			250, 
-			100,
-			COLOR_LIGHTORANGE,
-			"Pick a Subject:"
-		);
+
+		auto& textRenderer = TextRenderer::GetInstance();
+		textRenderer.RenderText(250, 100, COLOR_LIGHTORANGE, "Pick a Subject:");
 	}
 }

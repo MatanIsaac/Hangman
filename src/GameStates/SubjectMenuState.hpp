@@ -27,6 +27,5 @@ namespace isaac_hangman
 		UniqueButton 		m_SubjectFoodButton;
 		UniqueButton 		m_SubjectCountriesButton;
 		UniqueButton 		m_BackToMenuButton;
-		UniqueTextRenderer 	m_TextRenderer;
 	};
 }

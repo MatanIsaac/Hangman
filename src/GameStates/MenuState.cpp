@@ -11,15 +11,15 @@ namespace isaac_hangman
 {
 
 	MenuState::MenuState(GameStateManager& stateManager)
-		: m_GameStateManager(stateManager), m_TextRenderer(std::make_unique<TextRenderer>(40))
+		: m_GameStateManager(stateManager)
 	{
 		float xAxisCenter = SCREEN_WIDTH / 2.f;
 
 		glm::vec2 playButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) ) );
-		m_PlayButton = std::make_unique<Button>("Play", 36, playButtonPosition);
+		m_PlayButton = std::make_unique<Button>("Play", playButtonPosition);
 		
 		glm::vec2 quitButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) + 50.f ) );
-		m_QuitButton = std::make_unique<Button>("Quit", 36, quitButtonPosition); 
+		m_QuitButton = std::make_unique<Button>("Quit", quitButtonPosition); 
 
 	}
 
@@ -46,7 +46,9 @@ namespace isaac_hangman
 	{
 		m_PlayButton->Render();
 		m_QuitButton->Render();
-		m_TextRenderer->RenderText(250, 100,COLOR_LIGHTORANGE,"Welcome To Hangman");
+
+		auto& textRenderer = TextRenderer::GetInstance();
+		textRenderer.RenderText(250, 100,COLOR_LIGHTORANGE,"Welcome To Hangman");
 
 	}
 }
