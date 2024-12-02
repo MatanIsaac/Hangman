@@ -21,7 +21,8 @@ The libraries comes with the project so no need to download them yourself.
 Included in the repo:
 * SDL2 library
 * SDL2 extensions: SDL2_image, SDL2_mixer, SDL2_ttf
-* OpenGL Mathematics (GLM) library 
+* OpenGL Mathematics (GLM) library
+* SDL_FontCache
 
 ### <div align="center">Building from Source</div>
 
