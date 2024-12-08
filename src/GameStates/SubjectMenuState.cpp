@@ -59,6 +59,6 @@ namespace isaac_hangman
 		m_SubjectCountriesButton->Render();
 
 		auto& textRenderer = TextRenderer::GetInstance();
-		textRenderer.RenderText(250, 100, COLOR_LIGHTORANGE, "Pick a Subject:");
+		textRenderer.RenderText(325, 25, COLOR_LIGHTORANGE, "Pick a Subject:");
 	}
 }

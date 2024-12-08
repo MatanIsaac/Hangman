@@ -129,8 +129,8 @@ namespace isaac_hangman
             m_NextWordButton->Render();
 
             auto str = (m_Won && !m_Lost) ? "You Won!" : "You Lost!";
-            textRenderer.RenderText(SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 - 100, COLOR_LIGHTORANGE, str);
-            textRenderer.RenderText(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, COLOR_LIGHTORANGE, "Would You Like To Play Again?");
+            textRenderer.RenderText(SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 - 125, COLOR_WHITE, str);
+            textRenderer.RenderText(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, COLOR_WHITE, "Would You Like To Play Again?");
         }
     }
 

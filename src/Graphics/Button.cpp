@@ -13,7 +13,7 @@ namespace isaac_hangman
 		m_Position(position),
 		m_OriginalPosition(position),
 		m_ElapsedTime(0.0f),
-		m_IsButtonDown(false),
+		m_ButtonDown(false),
 		m_ButtonLocked(false)
 	{
 		m_ButtonSize = TextRenderer::GetInstance().GetTextDimensions(m_ButtonText);
@@ -26,7 +26,7 @@ namespace isaac_hangman
 		m_ButtonSize		= btn.m_ButtonSize;
 		m_Position			= btn.m_Position;
 		m_OriginalPosition	= btn.m_OriginalPosition;
-		m_IsButtonDown 		= btn.m_IsButtonDown;
+		m_ButtonDown 		= btn.m_ButtonDown;
 		m_ButtonLocked 		= btn.m_ButtonLocked;
 
 	}
@@ -39,7 +39,7 @@ namespace isaac_hangman
 		m_Position(std::move(other.m_Position)),
 		m_OriginalPosition(std::move(other.m_OriginalPosition)),
 		m_ElapsedTime(other.m_ElapsedTime),
-		m_IsButtonDown(other.m_IsButtonDown),
+		m_ButtonDown(other.m_ButtonDown),
 		m_ButtonLocked(other.m_ButtonLocked)
 	{
 		
@@ -55,7 +55,7 @@ namespace isaac_hangman
 			m_Position 			= std::move(other.m_Position);
 			m_OriginalPosition 	= std::move(other.m_OriginalPosition);
 			m_ElapsedTime 		= other.m_ElapsedTime;
-			m_IsButtonDown 		= other.m_IsButtonDown;
+			m_ButtonDown 		= other.m_ButtonDown;
 			m_ButtonLocked 		= other.m_ButtonLocked;
 		}
 		return *this;
@@ -71,91 +71,116 @@ namespace isaac_hangman
 			m_Position 			= other.m_Position;
 			m_OriginalPosition 	= other.m_OriginalPosition;
 			m_ElapsedTime 		= other.m_ElapsedTime;
-			m_IsButtonDown 		= other.m_IsButtonDown;
+			m_ButtonDown 		= other.m_ButtonDown;
 			m_ButtonLocked 		= other.m_ButtonLocked;
 		}
 		return *this;
 	}
 
-
-    void Button::ProcessInput()
-	{
-		
-	}
-
 	void Button::Update(float deltaTime)
 	{
 		int mouseX, mouseY;
-		Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY); 
+		Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
 
-    	bool isMouseHovering = (mouseX >= m_Position.x && mouseX <= (m_Position.x + m_ButtonSize.x)) &&
-                           		(mouseY >= m_Position.y && mouseY <= (m_Position.y + m_ButtonSize.y));
+		// Check if the mouse is hovering over the button
+		bool isMouseHovering = (mouseX >= m_Position.x && mouseX <= (m_Position.x + m_ButtonSize.x)) &&
+							(mouseY >= m_Position.y && mouseY <= (m_Position.y + m_ButtonSize.y));
 
+		// Check if the left mouse button is pressed
 		bool isLeftMousePressed = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
 
 		if (isMouseHovering)
 		{
 			if (isLeftMousePressed)
 			{
-				if (!m_IsButtonDown)
+				if (!m_ButtonLocked)
 				{
 					m_ButtonAction = ButtonAction::BUTTON_PRESSED;
-					m_IsButtonDown = true;
+					m_ButtonLocked = true; // Lock on press
 				}
-			}
-			else if (m_IsButtonDown)
-			{
-				m_ButtonAction = ButtonAction::BUTTON_RELEASED;
-				m_IsButtonDown = false;
+				else
+				{
+					m_ButtonAction = ButtonAction::BUTTON_DOWN;
+				}
+				m_ButtonDown = true; // Set button as held down
 			}
 			else
 			{
-				m_ButtonAction = ButtonAction::BUTTON_HOVERED;
+				if (m_ButtonDown)
+				{
+					m_ButtonAction = ButtonAction::BUTTON_RELEASED; // Trigger button release
+				}
+				else
+				{
+					m_ButtonAction = ButtonAction::BUTTON_HOVERED; // Hovered but not pressed
+				}
+				m_ButtonDown = false; // Reset button down state
 			}
 		}
 		else
 		{
+			if (isLeftMousePressed)
+			{
+				// Mouse pressed outside the button
+				m_ButtonLocked = true;  // Lock to prevent accidental activation on hover
+			}
+
+			if (!isLeftMousePressed)
+			{
+				// Mouse released outside
+				m_ButtonLocked = false; // Unlock when released
+			}
+
+			// Set action to out when the mouse is outside the button
 			m_ButtonAction = ButtonAction::BUTTON_OUT;
+			m_ButtonDown = false;
 		}
 	}
 
 	void Button::Render()
 	{
 		auto& textRenderer = TextRenderer::GetInstance();
-		
-		if (m_ButtonAction == ButtonAction::BUTTON_OUT )
+
+		switch (m_ButtonAction)
 		{
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255} ,m_ButtonText);
+		case ButtonAction::BUTTON_OUT:
+			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255}, m_ButtonText);
+			break;
+
+		case ButtonAction::BUTTON_HOVERED:
+			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 255, 255, 255}, m_ButtonText);
+			break;
+
+		case ButtonAction::BUTTON_PRESSED:
+			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{0, 0, 255, 255}, m_ButtonText);
+			break;
+
+		case ButtonAction::BUTTON_DOWN:
+			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{0, 0, 255, 255}, m_ButtonText);
+			break;
+
+		case ButtonAction::BUTTON_RELEASED:
+			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 0, 0, 255}, m_ButtonText);
+			break;
+
+		default:
+			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255}, m_ButtonText);
+			break;
 		}
-		else if (m_ButtonAction == ButtonAction::BUTTON_HOVERED )
-		{
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color {255,255,255,255} ,m_ButtonText);
-			
-		}
-		else if (m_ButtonAction == ButtonAction::BUTTON_PRESSED)
-		{
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color {0,0,255,255} ,m_ButtonText);
-		}
-		else
-		{
-			// Default rendering if other states aren't met
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255} ,m_ButtonText);
-		}
-		
 	}
+
 
 	bool Button::isPressed()
 	{
-		if (isButtonDown() && !GetButtonLocked())
+		// Check if the button is hovered and was pressed
+		if (m_ButtonAction == ButtonAction::BUTTON_RELEASED && m_ButtonLocked)
 		{
-			SetButtonLock(true);
+			// Unlock the button and register the click
+			m_ButtonLocked = false;
+			return true;
 		}
-		else if (!isButtonDown() && GetButtonLocked())
-		{
-			SetButtonLock(false);
-			return true;	
-		}
-		
+
+		// Do not register a click otherwise
 		return false;
 	}
 

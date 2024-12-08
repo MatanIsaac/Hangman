@@ -30,7 +30,6 @@ namespace isaac_hangman
 		Button& operator=(const Button& other);
 		Button& operator=(Button&& other) noexcept;
 
-		void ProcessInput();
 		void Update(float deltaTime);
 		void Render();
 
@@ -45,9 +44,9 @@ namespace isaac_hangman
 
 		void ApplySineAnimation(float deltaTime, float frequency, float amplitude, float phaseOffset);
 	private:
-		bool isButtonDown() const { return m_IsButtonDown; }
+		bool isButtonDown() const { return m_ButtonDown; }
 
-		void ResetButton() { m_IsButtonDown = false; }
+		void ResetButton() { m_ButtonDown = false; }
 		void SetButtonLock(bool lock) {  m_ButtonLocked = lock; }	
 
 		const glm::vec2& GetOriginalPosition() const { return m_OriginalPosition; } /* used for sine animations */
@@ -59,7 +58,7 @@ namespace isaac_hangman
         glm::vec2 			m_Position; 			
         glm::vec2 			m_OriginalPosition; 	
         float 				m_ElapsedTime; 		
-        bool 				m_IsButtonDown; 		
+        bool 				m_ButtonDown; 		
         bool 				m_ButtonLocked; 		
 	};
 }
