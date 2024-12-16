@@ -10,6 +10,7 @@
 #include "GameStates/PlayState.hpp"
 #include "GameStates/SubjectMenuState.hpp"
 #include "GameContext.hpp"
+#include "Core/SoundManager.hpp"
 
 namespace isaac_hangman
 {
@@ -37,6 +38,8 @@ namespace isaac_hangman
             SDL_Quit();
             return 1;
         }
+
+        SoundManager::GetInstance().init();
 
         m_Background = std::make_unique<Texture>();
         if (!m_Background->CreateTexture(context.GetRenderer().get(), "Assets/bg.jpg"))

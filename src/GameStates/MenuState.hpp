@@ -23,7 +23,6 @@ namespace isaac_hangman
 	private:
 		GameStateManager& 	m_GameStateManager;
 		UniqueButton 		m_PlayButton;	
-		UniqueButton 		m_QuitButton;	
-		//UniqueTextRenderer 	m_TextRenderer;
+		UniqueButton 		m_QuitButton;
 	};
 }

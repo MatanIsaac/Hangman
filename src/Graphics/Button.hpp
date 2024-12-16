@@ -60,5 +60,6 @@ namespace isaac_hangman
         float 				m_ElapsedTime; 		
         bool 				m_ButtonDown; 		
         bool 				m_ButtonLocked; 		
+		bool 				m_PlayOnce;
 	};
 }

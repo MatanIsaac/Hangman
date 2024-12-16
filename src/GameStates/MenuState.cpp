@@ -3,7 +3,7 @@
 #include "Util/ColorMacros.hpp"
 #include "SubjectMenuState.hpp"
 #include "Core/GameContext.hpp"
-
+#include <SDL2/SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <iostream>
 
@@ -20,13 +20,13 @@ namespace isaac_hangman
 		
 		glm::vec2 quitButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) + 50.f ) );
 		m_QuitButton = std::make_unique<Button>("Quit", quitButtonPosition); 
-
+				
 	}
 
 	void MenuState::ProcessInput()
 	{	
 		if (m_PlayButton->isPressed())
-		{		
+		{
 			m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager));
 		}
 

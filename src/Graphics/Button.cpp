@@ -1,7 +1,8 @@
 #include "Button.hpp"
-#include "../Util/ColorMacros.hpp"
 #include <iostream>
 #include <SDL_mouse.h>
+#include "../Util/ColorMacros.hpp"
+#include "Core/SoundManager.hpp"
 
 namespace isaac_hangman
 {
@@ -91,6 +92,12 @@ namespace isaac_hangman
 
 		if (isMouseHovering)
 		{
+			if(!m_PlayOnce)
+			{
+				SoundManager::GetInstance().playRandomSFX();
+				m_PlayOnce = true;
+			}
+
 			if (isLeftMousePressed)
 			{
 				if (!m_ButtonLocked)
@@ -119,6 +126,7 @@ namespace isaac_hangman
 		}
 		else
 		{
+			m_PlayOnce = false;
 			if (isLeftMousePressed)
 			{
 				// Mouse pressed outside the button
