@@ -1,9 +1,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <string>
 #include <unordered_map>
-#include <vector>
-#include <memory>
-#include <stdexcept>
+#include <filesystem>
 
 namespace isaac_hangman
 {
@@ -30,7 +28,11 @@ namespace isaac_hangman
                 return false;
             }
          
-		    std::string base = "D:\\SourceControl\\Hangman\\Assets\\SFX\\Chalkboard_SFX-0";
+            std::filesystem::path currentPath = std::filesystem::current_path();
+            
+		    std::string base = currentPath.string();
+            
+            base.append("\\Assets\\SFX\\Chalkboard_SFX-0");
 		    for(int i = 1; i < 8; i++)
 		    {
 			    std::string final_path = base + std::to_string(i) + ".wav";
