@@ -5,11 +5,21 @@
 
 namespace isaac_hangman
 {
+    enum EGameState
+    {
+        NONE,
+        MENU,
+        SUBJECT_MENU,
+        PLAY
+    };
+    
     class GameStateManager
     {
     public:
-        GameStateManager() = default;
-        ~GameStateManager()
+        GameStateManager()  = default;
+        ~GameStateManager() = default;
+
+        void Clean()
         {
             while(m_StateStack.size() > 0)
             {
@@ -54,13 +64,13 @@ namespace isaac_hangman
         }
 
         // Render the current state
-        void Render()
+        void Render(SDL_Renderer* renderer)
         {
             if (!m_StateStack.empty())
-                m_StateStack.top()->Render();
+                m_StateStack.top()->Render(renderer);
         }
 
     private:
-        std::stack<std::shared_ptr<IGameState>> m_StateStack; // Stack of game states
+        inline static std::stack<std::shared_ptr<IGameState>> m_StateStack; 
     };
 }

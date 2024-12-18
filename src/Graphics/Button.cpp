@@ -94,7 +94,7 @@ namespace isaac_hangman
 		{
 			if(!m_PlayOnce)
 			{
-				SoundManager::GetInstance().playRandomSFX();
+				SoundManager::GetInstance().PlayRandomSFX();
 				m_PlayOnce = true;
 			}
 
@@ -145,34 +145,34 @@ namespace isaac_hangman
 		}
 	}
 
-	void Button::Render()
+	void Button::Render(SDL_Renderer* renderer)
 	{
 		auto& textRenderer = TextRenderer::GetInstance();
-
+		
 		switch (m_ButtonAction)
 		{
 		case ButtonAction::BUTTON_OUT:
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255}, m_ButtonText);
+			textRenderer.RenderText(renderer,m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255}, m_ButtonText);
 			break;
 
 		case ButtonAction::BUTTON_HOVERED:
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 255, 255, 255}, m_ButtonText);
+			textRenderer.RenderText(renderer,m_Position.x, m_Position.y, SDL_Color{255, 255, 255, 255}, m_ButtonText);
 			break;
 
 		case ButtonAction::BUTTON_PRESSED:
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{0, 0, 255, 255}, m_ButtonText);
+			textRenderer.RenderText(renderer,m_Position.x, m_Position.y, SDL_Color{0, 0, 255, 255}, m_ButtonText);
 			break;
 
 		case ButtonAction::BUTTON_DOWN:
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{0, 0, 255, 255}, m_ButtonText);
+			textRenderer.RenderText(renderer,m_Position.x, m_Position.y, SDL_Color{0, 0, 255, 255}, m_ButtonText);
 			break;
 
 		case ButtonAction::BUTTON_RELEASED:
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 0, 0, 255}, m_ButtonText);
+			textRenderer.RenderText(renderer,m_Position.x, m_Position.y, SDL_Color{255, 0, 0, 255}, m_ButtonText);
 			break;
 
 		default:
-			textRenderer.RenderText(m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255}, m_ButtonText);
+			textRenderer.RenderText(renderer,m_Position.x, m_Position.y, SDL_Color{255, 183, 77, 255}, m_ButtonText);
 			break;
 		}
 	}
@@ -207,8 +207,6 @@ namespace isaac_hangman
 
 	void Button::SetPosition(const glm::vec2& newPosition) 
 	{
-		auto& textRenderer = TextRenderer::GetInstance();
-		textRenderer.SetPosition(newPosition);
 		m_Position = newPosition;
 	}
 

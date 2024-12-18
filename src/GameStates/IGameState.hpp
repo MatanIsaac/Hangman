@@ -10,7 +10,7 @@ namespace isaac_hangman
         virtual ~IGameState() = default;
         virtual void ProcessInput() = 0;
         virtual void Update(float deltaTime) = 0;
-        virtual void Render() = 0;
+        virtual void Render(SDL_Renderer* renderer) = 0;
     };
 
 }

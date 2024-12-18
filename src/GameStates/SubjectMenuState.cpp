@@ -6,11 +6,9 @@
 
 namespace isaac_hangman
 {
-	SubjectMenuState::SubjectMenuState(GameStateManager& stateManager)
-		: m_GameStateManager(stateManager)
+	SubjectMenuState::SubjectMenuState(GameStateManager& stateManager, IGame& game)
+		: m_GameStateManager(stateManager), m_Game(game), m_CurrentSubject(Subjects::NONE)
 	{	
-		m_CurrentSubject = Subjects::NONE;
-
 		glm::vec2 backButtonPosition( glm::vec2( 35.f, SCREEN_HEIGHT - 85.f ) );
 		m_BackToMenuButton = std::make_unique<Button>("Back To Main Menu", backButtonPosition);
 
@@ -28,7 +26,7 @@ namespace isaac_hangman
 			m_CurrentSubject 		= Subjects::FOOD;
 			const auto& randomWord 	= GetRandomWord(m_CurrentSubject);
 			std::cout << "\n\tWord: " << randomWord << '\n';
-			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
+			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject,m_Game));
 		}
 		
 		if (m_SubjectCountriesButton->isPressed())
@@ -36,7 +34,7 @@ namespace isaac_hangman
 			m_CurrentSubject 		= Subjects::COUNTRIES;
 			std::string randomWord 	= GetRandomWord(m_CurrentSubject);
 			std::cout << "\n\tWord: " << randomWord << '\n';
-			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject));
+			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject,m_Game));
 		}
 
 		if(m_BackToMenuButton->isPressed())
@@ -52,13 +50,13 @@ namespace isaac_hangman
 		m_SubjectCountriesButton->Update(deltaTime);
 	}
 
-	void SubjectMenuState::Render()
+	void SubjectMenuState::Render(SDL_Renderer* renderer)
 	{
-		m_BackToMenuButton->Render();
-		m_SubjectFoodButton->Render();
-		m_SubjectCountriesButton->Render();
+		m_BackToMenuButton->Render(renderer);
+		m_SubjectFoodButton->Render(renderer);
+		m_SubjectCountriesButton->Render(renderer);
 
 		auto& textRenderer = TextRenderer::GetInstance();
-		textRenderer.RenderText(325, 25, COLOR_LIGHTORANGE, "Pick a Subject:");
+		textRenderer.RenderText(renderer,325, 25, COLOR_LIGHTORANGE, "Pick a Subject:");
 	}
 }

@@ -1,5 +1,5 @@
 #include "TextRenderer.hpp"
-#include "Core/GameContext.hpp"
+#include "Core/Game.hpp"
 
 namespace isaac_hangman
 {
@@ -7,54 +7,32 @@ namespace isaac_hangman
     {
         if (m_Font)
         {
-            int width = FC_GetWidth(m_Font, "%s", text.c_str());
-            int height = FC_GetHeight(m_Font, "%s", text.c_str());
+            int width;
+            int height;
+            TTF_SizeText(m_Font.get(),text.c_str(),&width,&height);
             return glm::vec2(width, height);
         }
         return glm::vec2(0.f, 0.f);
     }
     
     TextRenderer::TextRenderer()
-        :
-        m_FontSize(35),
-        m_Rect({ 0, 0, 0, 0 }),
-        m_Font(FC_CreateFont()),
-        m_Position(0.f,0.f)
+        : m_FontSize(35)
     {
-        GameContext& context = GameContext::GetInstance();
-
-        if (FC_LoadFont(m_Font, context.GetRenderer().get(), "Assets/fonts/Filmcryptic.ttf", 
-            m_FontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL) == 0)
+        //m_TextTexture.reset(new Texture());
+        m_Font.reset(TTF_OpenFont("Assets/fonts/Filmcryptic.ttf",m_FontSize));
+        if (m_Font == nullptr)
         {
-            SDL_Log("Failed to load font: %s", SDL_GetError());
-        }
-    }
-
-    TextRenderer::~TextRenderer()
-    {
-        Clean();
-    } 
-
-    void TextRenderer::Clean()
-    {
-        if (m_Font)
-        {
-            FC_FreeFont(m_Font);
-            m_Font = nullptr;
+            SDL_Log("Failed to load font: %s", TTF_GetError());
+            return;
         }
     }
        
-    void TextRenderer::RenderText(float x, float y, SDL_Color color, const std::string& text)
+    void TextRenderer::RenderText(SDL_Renderer* renderer,float x, float y, SDL_Color color, const std::string& text)
     {
-        GameContext& context = GameContext::GetInstance();
-
-        if (m_Font && context.GetRenderer())
+        if (m_Font) 
         {
-            m_Rect = FC_DrawColor(m_Font, context.GetRenderer().get(), x, y, color, text.c_str());
+            m_TextTexture.CreateTextureFromText(m_Font.get(),text,color,renderer);
+            m_TextTexture.Render(renderer,x,y);
         }
-        else
-        {
-            SDL_Log("Failed to render text at text renderer");
-        }
-    }   
+    }
 };

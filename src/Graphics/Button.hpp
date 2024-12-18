@@ -18,7 +18,7 @@ namespace isaac_hangman
 		BUTTON_TOTAL
 	};
 
-	using UniqueButton = std::unique_ptr<class Button>;
+	using Unique_Button = std::unique_ptr<class Button>;
 
 	class Button
 	{
@@ -31,7 +31,7 @@ namespace isaac_hangman
 		Button& operator=(Button&& other) noexcept;
 
 		void Update(float deltaTime);
-		void Render();
+		void Render(SDL_Renderer* renderer);
 
 		bool isPressed();
 		

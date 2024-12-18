@@ -4,20 +4,18 @@
 namespace isaac_hangman
 {
 	Texture::Texture()
-		: mTexture(nullptr), mSize(glm::ivec2())
-	{
-	}
+		: m_Texture(nullptr)
+		, m_Size(glm::ivec2())
+	{}
 
 	Texture::Texture(Texture &&other) noexcept
 
-		: mTexture(std::move(other.mTexture)), mSize(other.mSize)
+		: m_Texture(std::move(other.m_Texture)), m_Size(other.m_Size)
 	{
 		other.SetTextureSize(glm::ivec2(0, 0));
 	}
 
-	Texture::~Texture() { Clean(); }
-
-	bool Texture::CreateTexture(SDL_Renderer* renderer, std::string path)
+	bool Texture::CreateTexture(std::string path,SDL_Renderer* renderer)
 	{
 		SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 		if (loadedSurface == nullptr)
@@ -37,13 +35,13 @@ namespace isaac_hangman
 		}
 		SDL_FreeSurface(loadedSurface); // Free the loaded surface after texture creation
 
-		SDL_QueryTexture(newTexture, nullptr, nullptr, &mSize.x, &mSize.y);
+		SDL_QueryTexture(newTexture, nullptr, nullptr, &m_Size.x, &m_Size.y);
 
-		mTexture.reset(newTexture);
-		return (mTexture != nullptr);
+		m_Texture = UniqueSDLTexture(newTexture,SDL_DestroyTexture);
+		return (m_Texture != nullptr);
 	}
 
-	bool Texture::CreateTextureFromText(SDL_Renderer* renderer, TTF_Font* font, std::string textureText, SDL_Color textColor)
+	bool Texture::CreateTextureFromText(TTF_Font* font, std::string textureText, SDL_Color textColor,SDL_Renderer* renderer)
 	{
 		SDL_Surface* loadedSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
 		if (loadedSurface == nullptr)
@@ -52,8 +50,8 @@ namespace isaac_hangman
 			return false;
 		}
 
-		mTexture.reset(SDL_CreateTextureFromSurface(renderer, loadedSurface));
-		if (mTexture == nullptr)
+		m_Texture = UniqueSDLTexture(SDL_CreateTextureFromSurface(renderer, loadedSurface),SDL_DestroyTexture);	
+		if (m_Texture == nullptr)
 		{
 			std::cout << "Failed to create texture from text: " << textureText.c_str() << " Error: " << SDL_GetError() << '\n';
 			SDL_FreeSurface(loadedSurface); // Free the loaded surface
@@ -61,7 +59,7 @@ namespace isaac_hangman
 		}
 
 		// Query the texture to get the width and height
-		if (SDL_QueryTexture(mTexture.get(), nullptr, nullptr, &mSize.x, &mSize.y) != 0)
+		if (SDL_QueryTexture(m_Texture.get(), nullptr, nullptr, &m_Size.x, &m_Size.y) != 0)
 		{
 			std::cout << "Failed to query texture, Error: " << SDL_GetError() << '\n';
 			SDL_FreeSurface(loadedSurface); // Free the loaded surface
@@ -69,47 +67,28 @@ namespace isaac_hangman
 		}
 
 		SDL_FreeSurface(loadedSurface); // Free the loaded surface
-		return (mTexture != nullptr);
+		return (m_Texture != nullptr);
 	}
-	void Texture::Render(SDL_Renderer *renderer, int xPos, int yPos)
+	void Texture::Render(SDL_Renderer* renderer,int xPos, int yPos)
 	{
-		SDL_Rect srcRect = {0, 0, mSize.x, mSize.y};
-		SDL_Rect renderQuad = {xPos, yPos, mSize.x, mSize.y};
-		SDL_RenderCopyEx(renderer, mTexture.get(), &srcRect, &renderQuad, 0.0, nullptr, SDL_FLIP_NONE);
-	}
-
-	void Texture::RenderFrame(SDL_Renderer *renderer, int xPos, int yPos, SDL_Rect *clip, SDL_RendererFlip flip)
-	{
-		// Set rendering space and render to screen
-		SDL_Rect renderQuad = {xPos, yPos, mSize.x, mSize.y};
-
-		// Set clip rendering dimensions
-		if (clip != nullptr)
-		{
-			renderQuad.w = clip->w;
-			renderQuad.h = clip->h;
-		}
-
-		// Render to screen
-		SDL_RenderCopyEx(renderer, mTexture.get(), clip, &renderQuad, 0.0, nullptr, flip);
-	}
-
-	void Texture::Clean()
-	{
+		SDL_Rect srcRect = {0, 0, m_Size.x, m_Size.y};
+		SDL_Rect renderQuad = {xPos, yPos, m_Size.x, m_Size.y};
+		SDL_RenderCopyEx(renderer, m_Texture.get(), &srcRect, &renderQuad, 0.0, nullptr, SDL_FLIP_NONE);
 	}
 
 	void Texture::SetBlendMode(SDL_BlendMode blending)
 	{
-		SDL_SetTextureBlendMode(mTexture.get(), blending);
+		SDL_SetTextureBlendMode(m_Texture.get(), blending);
 	}
 
 	void Texture::setAlpha(Uint8 alpha)
 	{
-		SDL_SetTextureAlphaMod(mTexture.get(), alpha);
+		SDL_SetTextureAlphaMod(m_Texture.get(), alpha);
 	}
+	
 	void Texture::SetTextureColor(SDL_Color newColor)
 	{
-		SDL_SetTextureColorMod(mTexture.get(), newColor.r, newColor.g, newColor.b);
+		SDL_SetTextureColorMod(m_Texture.get(), newColor.r, newColor.g, newColor.b);
 	}
 
 }

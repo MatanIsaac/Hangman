@@ -2,7 +2,6 @@
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp"
 #include "SubjectMenuState.hpp"
-#include "Core/GameContext.hpp"
 #include <SDL2/SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <iostream>
@@ -10,9 +9,11 @@
 namespace isaac_hangman
 {
 
-	MenuState::MenuState(GameStateManager& stateManager)
-		: m_GameStateManager(stateManager)
+	MenuState::MenuState(GameStateManager& stateManager, IGame& game)
+		: m_GameStateManager(stateManager), m_Game(game)
 	{
+
+
 		float xAxisCenter = SCREEN_WIDTH / 2.f;
 
 		glm::vec2 playButtonPosition( glm::vec2( xAxisCenter - 25, ( SCREEN_HEIGHT / 3.f ) ) );
@@ -27,12 +28,12 @@ namespace isaac_hangman
 	{	
 		if (m_PlayButton->isPressed())
 		{
-			m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager));
+			m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager,m_Game));
 		}
 
 		if (m_QuitButton->isPressed())
 		{
-			GameContext::GetInstance().m_IsRunning = false;
+			m_Game.Quit();
 		}
 	}
 
@@ -42,13 +43,12 @@ namespace isaac_hangman
 		m_QuitButton->Update(deltaTime);
 	}
 
-	void MenuState::Render()
+	void MenuState::Render(SDL_Renderer* renderer)
 	{
-		m_PlayButton->Render();
-		m_QuitButton->Render();
+		m_PlayButton->Render(renderer);
+		m_QuitButton->Render(renderer);
 
 		auto& textRenderer = TextRenderer::GetInstance();
-		textRenderer.RenderText(250, 100,COLOR_LIGHTORANGE,"Welcome To Hangman");
-
+		textRenderer.RenderText(renderer,250, 100,COLOR_LIGHTORANGE,"Welcome To Hangman");
 	}
 }

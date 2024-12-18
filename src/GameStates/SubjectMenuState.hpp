@@ -7,6 +7,7 @@
 #include "Graphics/Button.hpp"
 #include "Graphics/TextRenderer.hpp"
 #include "Core/GameStateManager.hpp"
+#include "Core/IGame.hpp"
 #include "../Subjects.hpp"
 
 namespace isaac_hangman
@@ -14,18 +15,20 @@ namespace isaac_hangman
 	class SubjectMenuState : public IGameState
 	{
 	public:
-		SubjectMenuState(GameStateManager& stateManager);
-		~SubjectMenuState() = default;
+		SubjectMenuState(GameStateManager& stateManager, IGame& game);
+		virtual ~SubjectMenuState() override {}
 
 		void ProcessInput() override;
 		void Update( float deltaTime ) override;
-		void Render() override;
+		void Render(SDL_Renderer* renderer) override;
 
 	private:
 		GameStateManager& 	m_GameStateManager;
+		IGame& 				m_Game;
+		SDL_Renderer* 		m_Renderer;
 		Subjects 			m_CurrentSubject;
-		UniqueButton 		m_SubjectFoodButton;
-		UniqueButton 		m_SubjectCountriesButton;
-		UniqueButton 		m_BackToMenuButton;
+		Unique_Button 		m_SubjectFoodButton;
+		Unique_Button 		m_SubjectCountriesButton;
+		Unique_Button 		m_BackToMenuButton;
 	};
 }

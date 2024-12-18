@@ -3,9 +3,10 @@
 #include <SDL.h>
 #include <string>
 #include <memory>
-#include "../third_party/SDL_FontCache.h" 
+#include <functional>
 #include "glm/glm.hpp"
-
+#include "Texture.hpp"
+#include "Util/Common.hpp"
 
 namespace isaac_hangman
 {
@@ -28,25 +29,19 @@ namespace isaac_hangman
         TextRenderer& operator=(const TextRenderer&) = delete;
         TextRenderer& operator=(TextRenderer&&) = delete;
 
-        // Clean up resources
-        void Clean();
-        
         // Render text
-        void RenderText(float x, float y, SDL_Color color, const std::string& text);
+        void RenderText(SDL_Renderer* renderer,float x, float y, SDL_Color color, const std::string& text);
 
         // Getters and setters
         glm::vec2 GetTextDimensions(const std::string& text);
-        const FC_Font& GetFont() const { return *m_Font; }
-        const glm::vec2& GetPosition() const { return m_Position; }
-        const SDL_Rect& GetRect() const { return m_Rect; }
-        void SetPosition(const glm::vec2& newPosition) { m_Position = newPosition; }
+
     private:
         TextRenderer();
-        ~TextRenderer();   
+        ~TextRenderer() = default;
 
-        int         m_FontSize;
-        SDL_Rect    m_Rect; 
-        FC_Font*    m_Font; 
-        glm::vec2   m_Position;
+        int             m_FontSize;
+        Unique_TTF_Font m_Font; 
+
+        Texture m_TextTexture;
     };
 }

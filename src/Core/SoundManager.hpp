@@ -2,6 +2,9 @@
 #include <string>
 #include <unordered_map>
 #include <filesystem>
+#include <memory>
+#include <sstream>
+#include "Util/Common.hpp"
 
 namespace isaac_hangman
 {
@@ -20,64 +23,68 @@ namespace isaac_hangman
         SoundManager& operator=(const SoundManager&) = delete;
 
         // Initialize SDL_mixer with desired audio format
-        bool init(int frequency = MIX_DEFAULT_FREQUENCY, Uint16 format = MIX_DEFAULT_FORMAT, int channels = 2, int chunksize = 2048) 
+        bool Init(int frequency = MIX_DEFAULT_FREQUENCY, Uint16 format = MIX_DEFAULT_FORMAT, int channels = 2, int chunksize = 2048) 
         {
             if (Mix_OpenAudio(frequency, format, channels, chunksize) < 0) 
             {
                 printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
                 return false;
             }
-         
-            std::filesystem::path currentPath = std::filesystem::current_path();
+
+            std::string basePath = std::filesystem::current_path().string() + "\\Assets\\SFX\\Chalkboard_SFX-0";
             
-		    std::string base = currentPath.string();
-            
-            base.append("\\Assets\\SFX\\Chalkboard_SFX-0");
-		    for(int i = 1; i < 8; i++)
-		    {
-			    std::string final_path = base + std::to_string(i) + ".wav";
-                std::string sfx_id = "sfx_" + std::to_string(i); 
-			    if(!loadSFX(sfx_id,final_path.c_str()))
-			    {
-				    printf( "Failed to load sfx_id: %s! SDL_mixer Error: %s\n",sfx_id.c_str(), Mix_GetError() );
-			    }
-		    }
+            for (int i = 1; i < 8; ++i) 
+            {
+                std::ostringstream finalPathStream;
+                finalPathStream << basePath << i << ".wav";
+                std::string finalPath = finalPathStream.str();
+
+                std::ostringstream sfxIDStream;
+                sfxIDStream << "sfx_" << i;
+                std::string sfxID = sfxIDStream.str();
+
+                if (!LoadSFX(sfxID, finalPath)) 
+                {
+                    printf("Failed to load sfx_id: %s! SDL_mixer Error: %s\n", sfxID.c_str(), Mix_GetError());
+                }
+            }
+
             return true;
         }
 
         // Load a sound effect
-        bool loadSFX(const std::string& id, const std::string& path) 
+        bool LoadSFX(const std::string& id, const std::string& path) 
         {
-            Mix_Chunk* sfx = Mix_LoadWAV(path.c_str());
+            Unique_Mixer_Chunk sfx(Mix_LoadWAV(path.c_str()));
             if (!sfx) 
             {
                 printf("Failed to load sound effect! SDL_mixer Error: %s\n", Mix_GetError());
                 return false;
             }
-            m_SFX[id] = sfx;
+            m_SFX[id] = std::move(sfx);
             return true;
         }
 
         // Load music
-        bool loadMusic(const std::string& id, const std::string& path) 
+        bool LoadMusic(const std::string& id, const std::string& path) 
         {
-            Mix_Music* music = Mix_LoadMUS(path.c_str());
+            Unique_Mixer_Music music(Mix_LoadMUS(path.c_str()));
             if (!music) 
             {
                 printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
                 return false;
             }
-            m_Music[id] = music;
+            m_Music[id] = std::move(music);
             return true;
         }
 
         // Play a sound effect
-        void playSFX(const std::string& id, int loops = 0) 
+        void PlaySFX(const std::string& id, int loops = 0) 
         {
             auto it = m_SFX.find(id);
             if (it != m_SFX.end()) 
             {
-                Mix_PlayChannel(-1, it->second, loops);
+                Mix_PlayChannel(-1, it->second.get(), loops);
             } 
             else 
             {
@@ -86,12 +93,12 @@ namespace isaac_hangman
         }
 
         // Play music
-        void playMusic(const std::string& id, int loops = -1) 
+        void PlayMusic(const std::string& id, int loops = -1) 
         {
             auto it = m_Music.find(id);
             if (it != m_Music.end()) 
             {
-                Mix_PlayMusic(it->second, loops);
+                Mix_PlayMusic(it->second.get(), loops);
             } 
             else 
             {
@@ -100,7 +107,7 @@ namespace isaac_hangman
         }
 
         // Play a random sound effect
-        void playRandomSFX() 
+        void PlayRandomSFX() 
         {
             if (m_SFX.empty()) 
             {
@@ -110,45 +117,29 @@ namespace isaac_hangman
 
             int randomIndex = rand() % m_SFX.size();
             auto it = std::next(m_SFX.begin(), randomIndex);
-            Mix_PlayChannel(-1, it->second, 0);
+            Mix_PlayChannel(-1, it->second.get(), 0);
         }
 
         // Stop music
-        void stopMusic() 
+        void StopMusic() 
         {
             Mix_HaltMusic();
         }
 
         // Clean up resources
-        void cleanup() 
+        void Clean() 
         {
-            for (auto& pair : m_SFX) 
-            {
-                Mix_FreeChunk(pair.second);
-            }
             m_SFX.clear();
-
-            for (auto& pair : m_Music) 
-            {
-                Mix_FreeMusic(pair.second);
-            }
             m_Music.clear();
-
             Mix_CloseAudio();
         }
 
     private:
-        SoundManager()
-        {
-            init();
-        }
-        ~SoundManager() 
-        {
-            cleanup();
-        }
-
-        std::unordered_map<std::string, Mix_Chunk*> m_SFX;
-        std::unordered_map<std::string, Mix_Music*> m_Music;
+        SoundManager() = default;
+        ~SoundManager() { Clean(); }
+        
+        std::unordered_map<std::string, Unique_Mixer_Chunk> m_SFX;
+        std::unordered_map<std::string, Unique_Mixer_Music> m_Music;
     };
 
 } // namespace isaac_hangman
