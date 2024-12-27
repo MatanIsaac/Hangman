@@ -9,6 +9,7 @@
 #include "GameStates/PlayState.hpp"
 #include "GameStates/SubjectMenuState.hpp"
 #include "Core/SoundManager.hpp"
+#include "GameStateManager.hpp"
 
 namespace isaac_hangman
 {
@@ -65,8 +66,8 @@ namespace isaac_hangman
             Clean();
             return;
         }
-
-        m_StateManager.PushState(std::make_shared<MenuState>(m_StateManager,*this));
+        
+        GameStateManager::GetInstance()->PushState(std::make_shared<MenuState>(*this));
         
         while (m_IsRunning)
         {
@@ -85,7 +86,7 @@ namespace isaac_hangman
         if (m_Renderer)
             m_Renderer.reset();
                 
-        m_StateManager.Clean();
+        GameStateManager::GetInstance()->Clean();
         SoundManager::GetInstance().Clean();
         TTF_Quit();
         IMG_Quit();
@@ -94,7 +95,7 @@ namespace isaac_hangman
 
     void Game::HandleEvents()
     {
-        m_StateManager.ProcessInput();
+        GameStateManager::GetInstance()->ProcessInput();
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
@@ -115,7 +116,7 @@ namespace isaac_hangman
     }
     void Game::Update(float deltaTime)
     {
-        m_StateManager.Update(deltaTime);
+        GameStateManager::GetInstance()->Update(deltaTime);
     }
 
     void Game::Render()
@@ -126,7 +127,8 @@ namespace isaac_hangman
         if(m_Background)
             m_Background->Render(m_Renderer.get() ,0,0);
         
-        m_StateManager.Render(m_Renderer.get());
+        
+        GameStateManager::GetInstance()->Render(m_Renderer.get());
 
         SDL_RenderPresent(m_Renderer.get());
     }

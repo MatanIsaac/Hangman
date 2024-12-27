@@ -2,13 +2,16 @@
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp" 
 #include "GameStates/PlayState.hpp"
+#include "Core/GameStateManager.hpp"
 #include <iostream>
 
 namespace isaac_hangman
 {
-	SubjectMenuState::SubjectMenuState(GameStateManager& stateManager, IGame& game)
-		: m_GameStateManager(stateManager), m_Game(game), m_CurrentSubject(Subjects::NONE)
+	SubjectMenuState::SubjectMenuState(IGame& game)
+		: m_Game(game), m_CurrentSubject(Subjects::NONE)
 	{	
+		m_StateName = "Subject Menu State";
+
 		glm::vec2 backButtonPosition( glm::vec2( 35.f, SCREEN_HEIGHT - 85.f ) );
 		m_BackToMenuButton = std::make_unique<Button>("Back To Main Menu", backButtonPosition);
 
@@ -26,7 +29,7 @@ namespace isaac_hangman
 			m_CurrentSubject 		= Subjects::FOOD;
 			const auto& randomWord 	= GetRandomWord(m_CurrentSubject);
 			std::cout << "\n\tWord: " << randomWord << '\n';
-			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject,m_Game));
+			GameStateManager::GetInstance()->PushState(std::make_shared<PlayState>(randomWord,m_CurrentSubject,m_Game));
 		}
 		
 		if (m_SubjectCountriesButton->isPressed())
@@ -34,12 +37,12 @@ namespace isaac_hangman
 			m_CurrentSubject 		= Subjects::COUNTRIES;
 			std::string randomWord 	= GetRandomWord(m_CurrentSubject);
 			std::cout << "\n\tWord: " << randomWord << '\n';
-			m_GameStateManager.PushState(std::make_shared<PlayState>(m_GameStateManager,randomWord,m_CurrentSubject,m_Game));
+			GameStateManager::GetInstance()->PushState(std::make_shared<PlayState>(randomWord,m_CurrentSubject,m_Game));
 		}
 
 		if(m_BackToMenuButton->isPressed())
 		{
-			m_GameStateManager.PopState();
+			GameStateManager::GetInstance()->PopState();
 		}
 	}
 

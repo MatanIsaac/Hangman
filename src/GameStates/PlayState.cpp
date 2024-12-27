@@ -1,7 +1,7 @@
 #include "PlayState.hpp"
 #include "Util/ColorMacros.hpp"
 #include "Util/Common.hpp"
-
+#include "Core/GameStateManager.hpp"
 
 #include <string>
 #include <cstring>
@@ -10,9 +10,8 @@
 
 namespace isaac_hangman
 {
-    PlayState::PlayState(GameStateManager& stateManager,const std::string& randomWord, Subjects subject, IGame& game)
-        : m_GameStateManager(stateManager)
-        , m_Word(randomWord)
+    PlayState::PlayState(const std::string& randomWord, Subjects subject, IGame& game)
+        : m_Word(randomWord)
         , m_ECurrentSubject(subject)
         , m_Game(game)
         , m_WrongGuesses(0)
@@ -21,7 +20,7 @@ namespace isaac_hangman
         , m_Lost(false)
         , m_SpaceRemoved(false)
     {
-        
+        m_StateName = "PlayState";
         m_CurrentSubjectName    = "Subject: " + SubjectToString(m_ECurrentSubject);
 
         glm::vec2 nextWordButtonPosition( glm::vec2( SCREEN_WIDTH - 180.f, SCREEN_HEIGHT - 85 )  );
@@ -46,7 +45,7 @@ namespace isaac_hangman
 
         if(m_BackToSubjectsButton->isPressed())
         {
-            m_GameStateManager.PopState();
+            GameStateManager::GetInstance()->PopState();
         }
         
         if(!m_Lost && !m_Won)

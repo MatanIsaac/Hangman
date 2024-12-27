@@ -15,7 +15,7 @@ namespace isaac_hangman
 	class SubjectMenuState : public IGameState
 	{
 	public:
-		SubjectMenuState(GameStateManager& stateManager, IGame& game);
+		SubjectMenuState(IGame& game);
 		virtual ~SubjectMenuState() override {}
 
 		void ProcessInput() override;
@@ -23,7 +23,6 @@ namespace isaac_hangman
 		void Render(SDL_Renderer* renderer) override;
 
 	private:
-		GameStateManager& 	m_GameStateManager;
 		IGame& 				m_Game;
 		SDL_Renderer* 		m_Renderer;
 		Subjects 			m_CurrentSubject;

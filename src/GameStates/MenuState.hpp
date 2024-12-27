@@ -14,7 +14,7 @@ namespace isaac_hangman
 	class MenuState : public IGameState
 	{
 	public:
-		MenuState(GameStateManager& stateManager, IGame& game);
+		MenuState(IGame& game);
 		virtual ~MenuState() override {}
 
 		void ProcessInput() override;
@@ -22,7 +22,6 @@ namespace isaac_hangman
 		void Render(SDL_Renderer* renderer) override;
 
 	private:          
-		GameStateManager&	m_GameStateManager;
 		IGame& 				m_Game;
 		Unique_Button 		m_PlayButton;	
 		Unique_Button 		m_QuitButton;

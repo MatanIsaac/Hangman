@@ -60,7 +60,7 @@ ifeq ($(OS), Windows_NT)
     LIB_DIRS = -Llib/windows/SDL2
 
     # Compiler Flags
-    CFLAGS = -Wall -std=c++17 $(INCLUDE_DIRS) -O0 -MMD -MP -DSDL_MAIN_HANDLED -fsanitize=leak -g
+    CFLAGS = -Wall -std=c++17 $(INCLUDE_DIRS) -O2 -MMD -MP -DSDL_MAIN_HANDLED -fsanitize=leak -g
 
     # Libraries to link (static linking) -mwindows
     LIBS = $(LIB_DIRS) -lmingw32 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image

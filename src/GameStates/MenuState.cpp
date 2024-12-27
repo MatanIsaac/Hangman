@@ -2,6 +2,7 @@
 #include "Util/Common.hpp"
 #include "Util/ColorMacros.hpp"
 #include "SubjectMenuState.hpp"
+#include "Core/GameStateManager.hpp"
 #include <SDL2/SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <iostream>
@@ -9,10 +10,10 @@
 namespace isaac_hangman
 {
 
-	MenuState::MenuState(GameStateManager& stateManager, IGame& game)
-		: m_GameStateManager(stateManager), m_Game(game)
+	MenuState::MenuState(IGame& game)
+		: m_Game(game)
 	{
-
+		m_StateName = "MenuState";
 
 		float xAxisCenter = SCREEN_WIDTH / 2.f;
 
@@ -28,7 +29,7 @@ namespace isaac_hangman
 	{	
 		if (m_PlayButton->isPressed())
 		{
-			m_GameStateManager.PushState(std::make_shared<SubjectMenuState>(m_GameStateManager,m_Game));
+			GameStateManager::GetInstance()->PushState(std::make_shared<SubjectMenuState>(m_Game));
 		}
 
 		if (m_QuitButton->isPressed())

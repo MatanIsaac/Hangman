@@ -20,7 +20,7 @@ namespace isaac_hangman
 	class PlayState : public IGameState
 	{
 	public:
-		PlayState(GameStateManager& stateManager,const std::string& randomWord, Subjects subject, IGame& game);
+		PlayState(const std::string& randomWord, Subjects subject, IGame& game);
 		virtual ~PlayState() override {}
 		
 		void ProcessInput() override;
@@ -38,7 +38,6 @@ namespace isaac_hangman
 		void RenderCorrectLetters(SDL_Renderer* renderer);
 
 	private:
-		GameStateManager& 	m_GameStateManager;
 		std::string 		m_Word;
 		Subjects 			m_ECurrentSubject;
 		IGame& 				m_Game; 

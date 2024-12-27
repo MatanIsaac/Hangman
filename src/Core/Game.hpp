@@ -2,15 +2,14 @@
 #include <memory>
 #include <string>
 #include <functional>
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_image.h>
 
 #include "Util/Common.hpp"
 #include "GameStates/IGameState.hpp"
 #include "Graphics/Texture.hpp"
-#include "GameStateManager.hpp"
 #include "IGame.hpp"
 
 namespace isaac_hangman
@@ -39,6 +38,5 @@ namespace isaac_hangman
         Unique_SDL_Renderer m_Renderer;
         bool                m_IsRunning;
         Unique_Texture      m_Background;
-        GameStateManager    m_StateManager;
     };
 }
