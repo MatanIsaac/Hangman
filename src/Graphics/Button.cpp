@@ -2,7 +2,6 @@
 #include <iostream>
 #include <SDL_mouse.h>
 #include "../Util/ColorMacros.hpp"
-#include "Core/SoundManager.hpp"
 
 namespace isaac_hangman
 {
@@ -94,7 +93,6 @@ namespace isaac_hangman
 		{
 			if(!m_PlayOnce)
 			{
-				SoundManager::GetInstance().PlayRandomSFX();
 				m_PlayOnce = true;
 			}
 

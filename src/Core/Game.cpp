@@ -8,7 +8,6 @@
 #include "GameStates/MenuState.hpp"
 #include "GameStates/PlayState.hpp"
 #include "GameStates/SubjectMenuState.hpp"
-#include "Core/SoundManager.hpp"
 #include "GameStateManager.hpp"
 
 namespace isaac_hangman
@@ -34,14 +33,6 @@ namespace isaac_hangman
         if (IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) == 0) 
         {
             std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
-            return false;
-        }
-
-        if(!SoundManager::GetInstance().Init())
-        {
-            printf("Failed to init SoundMananger!\n");
-            TTF_Quit();
-            IMG_Quit();
             return false;
         }
 
@@ -87,7 +78,7 @@ namespace isaac_hangman
             m_Renderer.reset();
                 
         GameStateManager::GetInstance()->Clean();
-        SoundManager::GetInstance().Clean();
+        
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();
